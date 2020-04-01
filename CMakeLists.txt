@@ -8,6 +8,7 @@ set(LIB_SRC ${LIB_DIR}/liblevi.c)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_library(libleviathanK SHARED ${LIB_SRC})
+set_target_properties(libleviathanK PROPERTIES PREFIX "")
 
 add_executable(${PROJECT_NAME} ${LEVI_SRC})
 target_link_libraries(${PROJECT_NAME} libleviathanK)
