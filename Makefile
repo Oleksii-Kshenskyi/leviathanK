@@ -1,12 +1,12 @@
 .SILENT: all clean run
 
 all:
-	mkdir build
+	mkdir -p build
 	cd build && cmake ..
 	cd build && make
 
-clean: build
+clean:
 	rm -rf build
 
-run: build/leviathanK
+run: all
 	build/leviathanK
