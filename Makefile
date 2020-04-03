@@ -1,6 +1,8 @@
-.SILENT: all clean run
+.SILENT: all clean run compile justrun rebuild
 
-all:
+all: compile
+
+compile:
 	mkdir -p build
 	cd build && cmake ..
 	cd build && make
@@ -8,5 +10,10 @@ all:
 clean:
 	rm -rf build
 
-run: all
+rebuild: clean compile
+
+run: compile
+	build/leviathanK
+
+justrun: build/leviathanK
 	build/leviathanK
