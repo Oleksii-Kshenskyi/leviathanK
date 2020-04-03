@@ -4,7 +4,8 @@ project(leviathanK)
 set(LEVI_DIR src/levi)
 set(LIB_DIR src/lib)
 set(LEVI_SRC ${LEVI_DIR}/main.c)
-set(LIB_SRC ${LIB_DIR}/liblevi.c)
+set(LIB_SRC ${LIB_DIR}/memory.c
+            ${LIB_DIR}/liblevi.c)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_library(libleviathanK SHARED ${LIB_SRC})
