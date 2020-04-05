@@ -11,3 +11,16 @@ struct List* list_create_head(Memory* memory, void* new_value)
 
    return new_list;
 }
+
+void list_insert_tail(Memory* memory, struct List* list, void* new_value)
+{
+   struct List* new_node = memory_allocate(memory, sizeof(struct List));
+   new_node->value = new_value;
+   new_node->previous = list->tail;
+   new_node->next = NULL;
+   new_node->head = list->head;
+   new_node->tail = new_node;
+
+   list->tail->next = new_node;
+   list->tail = new_node;
+}

@@ -13,5 +13,6 @@ struct List
 };
 
 extern struct List* list_create_head(Memory* memory, void* new_value);
+extern void list_insert_tail(Memory* memory, struct List* list, void* new_value);
 
 #endif

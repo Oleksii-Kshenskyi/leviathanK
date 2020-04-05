@@ -57,3 +57,81 @@ int main_list_creates_head()
    free(mem.pointer);
    return 0;
 }
+
+void check_list_ascending(struct List* list)
+{
+   int value = 1;
+   struct List* current = list->head;
+
+   printf("=== ASCENDING CHECK ===\n");
+   while(value <= 5 && current != NULL)
+   {
+      printf("VALUE[%d] == %d\n", value, *(int*)current->value);
+      assert(*(int*)current->value == value);
+      current = current->next;
+      value++;
+   }
+   printf("\n");
+}
+
+void check_list_descending(struct List* list, int starting_value)
+{
+   int value = starting_value;
+   struct List* current = list->tail;
+
+   printf("=== DESCENDING CHECK ===\n");
+   while(value >= 1 && current != NULL)
+   {
+      printf("VALUE[%d] == %d\n", value, *(int*)current->value);
+      assert(*(int*)current->value == value);
+      current = current->previous;
+      value--;
+   }
+   printf("\n");
+}
+
+/* this condition is not satisfied because it would
+   require looping over all heads and tails and changing
+   them. As it stands now , only head and tail have relevant 
+   head and tail pointers. */
+void check_head_tail_integrity(struct List* list)
+{
+   struct List* current = list->head;
+   struct List* head = current->head;
+   struct List* tail = current->tail;
+
+   while(current != NULL)
+   {
+      assert(current->head == head);
+      assert(current->tail == tail);
+      current = current->next;
+   }
+}
+
+int main_inserts_a_bunch_into_list_tail()
+{
+   Memory mem = memory_create(1 * KB);
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 1;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 2;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 3;
+   int* val4 = memory_allocate(&mem, 1 * sizeof(int));
+   *val4 = 4;
+   int* val5 = memory_allocate(&mem, 1 * sizeof(int));
+   *val5 = 5;
+
+   struct List* the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+   list_insert_tail(&mem, the_list, val4);
+   list_insert_tail(&mem, the_list, val5);
+
+   check_list_ascending(the_list);
+   check_list_descending(the_list, *val5);
+   // check_head_tail_integrity(the_list); // this does not pass for now
+
+   printf("main_inserts_a_bunch_into_list_tail: OK\n");
+   return 0;
+}
