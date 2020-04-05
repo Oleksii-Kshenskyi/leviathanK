@@ -1,5 +1,8 @@
-#include "liblevi.h"
 #include <string.h>
+#include <assert.h>
+
+#include "liblevi.h"
+
 
 int main_test_memory_before_growth()
 {
@@ -31,5 +34,26 @@ int main_test_memory_before_growth()
    strcpy(string_err, "string err");*/
 
    free(the_mem.pointer);
+   return 0;
+}
+
+int main_list_creates_head()
+{
+   Memory mem = memory_create(1 * KB);
+   int* val = memory_allocate(&mem, 1 * sizeof(int));
+   *val = 34;
+
+   struct List* head = list_create_head(&mem, val);
+
+   assert(head->head == head);
+   assert(head->tail == head);
+   assert(head->next == NULL);
+   assert(head->previous == NULL);
+   assert(head->value == val);
+   assert(*(int*)(head->value) == 34);
+
+   printf("head->value == %d\n", *(int*)(head->value));
+   printf("TEST: SUCCESS\n");
+   free(mem.pointer);
    return 0;
 }
