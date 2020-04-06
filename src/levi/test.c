@@ -132,6 +132,30 @@ int main_inserts_a_bunch_into_list_tail()
    check_list_descending(the_list, *val5);
    // check_head_tail_integrity(the_list); // this does not pass for now
 
+   memory_clear(&mem);
+   val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 365;
+   val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 1028;
+   val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 333165;
+   the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+
+   printf("==== CHECKING RANDOM INTS ====\n");
+   struct List* current = the_list->head;
+   printf("val1 = %d\n", *(int*)current->value);
+   assert(*(int*)current->value == 365);
+   current = current->next;
+   printf("val2 = %d\n", *(int*)current->value);
+   assert(*(int*)current->value == 1028);
+   current = current->next;
+   printf("val3 = %d\n", *(int*)current->value);
+   assert(*(int*)current->value == 333165);
+   printf("\n");
+
+   free(mem.pointer);
    printf("main_inserts_a_bunch_into_list_tail: OK\n");
    return 0;
 }
