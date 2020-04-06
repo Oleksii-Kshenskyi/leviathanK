@@ -108,6 +108,11 @@ void check_head_tail_integrity(struct List* list)
    }
 }
 
+void print_element(struct List* element, void* data)
+{
+   printf("element = %d\n", *(int*)element->value);
+}
+
 int main_inserts_a_bunch_into_list_tail()
 {
    Memory mem = memory_create(1 * KB);
@@ -145,17 +150,57 @@ int main_inserts_a_bunch_into_list_tail()
 
    printf("==== CHECKING RANDOM INTS ====\n");
    struct List* current = the_list->head;
-   printf("val1 = %d\n", *(int*)current->value);
    assert(*(int*)current->value == 365);
    current = current->next;
-   printf("val2 = %d\n", *(int*)current->value);
    assert(*(int*)current->value == 1028);
    current = current->next;
-   printf("val3 = %d\n", *(int*)current->value);
    assert(*(int*)current->value == 333165);
+   list_for_each(the_list, print_element, NULL);
    printf("\n");
 
    free(mem.pointer);
    printf("main_inserts_a_bunch_into_list_tail: OK\n");
+   return 0;
+}
+
+void increment_value(struct List* element, void* data)
+{
+   (*(int*)element->value)++;
+}
+
+int main_checks_foreach()
+{
+   Memory mem = memory_create(0.5 * KB);
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 100;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 200;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 300;
+   int* val4 = memory_allocate(&mem, 1 * sizeof(int));
+   *val4 = 400;
+   int* val5 = memory_allocate(&mem, 1 * sizeof(int));
+   *val5 = 500;
+   struct List* the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+   list_insert_tail(&mem, the_list, val4);
+   list_insert_tail(&mem, the_list, val5);
+
+   printf("==== BEFORE INCREMENT: ====\n");
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+   list_for_each(the_list, increment_value, NULL);
+   printf("==== INCREMENTED VALUES: ====\n");
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   assert(*(int*)(the_list->head->value) == 101);
+   assert(*(int*)(the_list->head->next->value) == 201);
+   assert(*(int*)(the_list->head->next->next->value) == 301);
+   assert(*(int*)(the_list->head->next->next->next->value) == 401);
+   assert(*(int*)(the_list->head->next->next->next->next->value) == 501);
+
+   free(mem.pointer);
    return 0;
 }

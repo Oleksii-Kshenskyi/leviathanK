@@ -24,3 +24,14 @@ void list_insert_tail(Memory* memory, struct List* list, void* new_value)
    list->tail->next = new_node;
    list->tail = new_node;
 }
+
+void list_for_each(struct List* list, foreach_handler_func handler, void* data)
+{
+   struct List* current = list->head;
+
+   while(current)
+   {
+      handler(current, data);
+      current = current->next;
+   }
+}
