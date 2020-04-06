@@ -245,7 +245,11 @@ int main_checks_find_if()
    if(found)
       printf("%d\n", *(int*)found->value);
    else
-      printf("NULL\n");   
+      printf("NULL\n");
+
+   *(int*)greater_than_this = 301000;
+   struct List* not_found = list_find_first_if(the_list, greater_than, greater_than_this);
+   assert(!not_found);
 
    free(mem.pointer);
    return 0;
