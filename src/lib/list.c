@@ -1,7 +1,11 @@
+#include <assert.h>
+
 #include "list.h"
 
 struct List* list_create_head(Memory* memory, void* new_value)
 {
+   assert(memory);
+
    struct List* new_list = memory_allocate(memory, sizeof(struct List));
    new_list->head = new_list;
    new_list->tail = new_list;
@@ -27,6 +31,9 @@ void list_insert_tail(Memory* memory, struct List* list, void* new_value)
 
 void list_for_each(struct List* list, foreach_handler_func handler, void* data)
 {
+   assert(list);
+   assert(handler);
+
    struct List* current = list->head;
 
    while(current)
