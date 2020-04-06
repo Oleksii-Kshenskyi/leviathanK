@@ -204,3 +204,49 @@ int main_checks_foreach()
    free(mem.pointer);
    return 0;
 }
+
+int greater_than(struct List* element, void* greater_than_what)
+{
+   int what = *(int*)greater_than_what;
+   return (*(int*)element->value > what) ? TRUE : FALSE;
+}
+
+int main_checks_find_if()
+{
+   Memory mem = memory_create(0.5 * KB);
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 1;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 3;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 2305;
+   int* val4 = memory_allocate(&mem, 1 * sizeof(int));
+   *val4 = 5605;
+   int* val5 = memory_allocate(&mem, 1 * sizeof(int));
+   *val5 = 300202;
+   struct List* the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+   list_insert_tail(&mem, the_list, val4);
+   list_insert_tail(&mem, the_list, val5);
+
+   void* greater_than_this = memory_allocate(&mem, sizeof(int));
+   *(int*)greater_than_this = 4;
+
+   struct List* found = list_find_first_if(the_list, greater_than, greater_than_this);
+
+   assert(found);
+   assert(*(int*)found->value == 2305);
+   assert(*(int*)found->previous->value == 3);
+   assert(*(int*)found->next->value == 5605);
+
+   printf("Condition: X > %d;\n", *(int*)greater_than_this);
+   printf("X = ");
+   if(found)
+      printf("%d\n", *(int*)found->value);
+   else
+      printf("NULL\n");   
+
+   free(mem.pointer);
+   return 0;
+}

@@ -42,3 +42,17 @@ void list_for_each(struct List* list, foreach_handler_func handler, void* data)
       current = current->next;
    }
 }
+
+struct List* list_find_first_if(struct List* list, list_find_predicate predicate, void* data)
+{
+   assert(list);
+   assert(predicate);
+
+   struct List* current = list->head;
+   while(current && !predicate(current, data))
+   {
+      current = current->next;
+   }
+
+   return current;
+}
