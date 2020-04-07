@@ -56,3 +56,60 @@ struct List* list_find_first_if(struct List* list, list_find_predicate predicate
 
    return current;
 }
+
+static void list_delete_head(struct List** list_ptr)
+{
+   assert(list_ptr);
+   struct List* delete_me = *list_ptr;
+   assert(delete_me);
+
+   delete_me->next->tail = delete_me->tail;
+
+   delete_me->head = delete_me->next;
+   delete_me->head->previous = NULL;
+   printf("*list_ptr->head = %p\n", (*list_ptr)->head);
+   printf("*(int*)list_ptr->head->value = %d\n", *(int*)(*list_ptr)->head->value);
+   *list_ptr = delete_me->head;
+   printf("*list_ptr->head = %p\n", (*list_ptr)->head);
+   printf("*(int*)list_ptr->head->value = %d\n", *(int*)(*list_ptr)->head->value);
+}
+
+static void list_delete_tail(struct List* list)
+{
+   assert(list);
+
+   struct List* new_tail = list->tail->previous;
+   list->tail = new_tail;
+   new_tail->next = NULL;
+}
+
+static void list_delete_middle_element(struct List* delete_me)
+{
+   assert(delete_me);
+
+   struct List* before_me = delete_me->previous;
+   struct List* after_me = delete_me->next;
+   assert(before_me);
+   assert(after_me);
+
+   before_me->next = after_me;
+   after_me->previous = before_me;
+}
+
+extern void list_delete_first_if(struct List** list_ptr, list_delete_predicate predicate, void* data)
+{
+   assert(list_ptr);
+   struct List* list = *list_ptr;
+   assert(list);
+   assert(predicate);
+
+   struct List* delete_me = list_find_first_if(list, predicate, data);
+   assert(delete_me);
+
+   if(delete_me == list->head && delete_me == list)
+      list_delete_head(list_ptr);
+   else if(delete_me == list->tail)
+      list_delete_tail(list);
+   else
+      list_delete_middle_element(delete_me);
+}

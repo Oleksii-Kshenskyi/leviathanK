@@ -3,7 +3,6 @@
 
 #include "liblevi.h"
 
-
 int main_test_memory_before_growth()
 {
    Memory the_mem = memory_create(3 * KB);
@@ -253,4 +252,50 @@ int main_checks_find_if()
 
    free(mem.pointer);
    return 0;
+}
+
+int equal_to(struct List* element, void* equal_to_what)
+{
+   int what = *(int*)equal_to_what;
+   return (*(int*)element->value == what) ? TRUE : FALSE;
+}
+
+int main/*_deletes_head*/()
+{
+   Memory mem = memory_create(0.5 * KB);
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 132;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 428;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 201;
+   int* val4 = memory_allocate(&mem, 1 * sizeof(int));
+   *val4 = 9001;
+   int* val5 = memory_allocate(&mem, 1 * sizeof(int));
+   *val5 = 500348;
+   struct List* the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+   list_insert_tail(&mem, the_list, val4);
+   list_insert_tail(&mem, the_list, val5);
+
+   printf("==== BEFORE DELETION ====\n");
+   list_for_each(the_list, print_element, NULL);
+   int equal_to_this = 132;
+   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   printf("\n==== AFTER DELETION ====\n");
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   equal_to_this = 428;
+   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   printf("\n==== AFTER DELETION 2 ====\n");
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   /*equal_to_this = 201;
+   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   printf("\n==== AFTER DELETION 3 ====\n");
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");*/
 }
