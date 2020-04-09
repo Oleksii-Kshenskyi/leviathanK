@@ -14,6 +14,10 @@ int main_test_memory_before_growth()
    char* string_three = memory_allocate(&the_mem, 1 * KB);
    strcpy(string_three, "string three");
 
+   assert(!strcmp(string_one, "string one"));
+   assert(!strcmp(string_two, "string two"));
+   assert(!strcmp(string_three, "string three"));
+
    printf("%s > %s > %s\n", string_one, string_two, string_three);
 
    memory_clear(&the_mem);
@@ -25,6 +29,10 @@ int main_test_memory_before_growth()
    char* string_six = memory_allocate(&the_mem, 1 * KB);
    strcpy(string_six, "string six");
 
+   assert(!strcmp(string_four, "string four"));
+   assert(!strcmp(string_five, "string five"));
+   assert(!strcmp(string_six, "string six"));
+
    printf("%s > %s > %s\n", string_four, string_five, string_six);
 
    // this should core dump the application
@@ -32,6 +40,7 @@ int main_test_memory_before_growth()
    /*char* string_err = memory_allocate(&the_mem, 1);
    strcpy(string_err, "string err");*/
 
+   printf("main_test_memory_before_growth: OK!\n");
    free(the_mem.pointer);
    return 0;
 }
@@ -52,7 +61,7 @@ int main_list_creates_head()
    assert(*(int*)(head->value) == 34);
 
    printf("head->value == %d\n", *(int*)(head->value));
-   printf("TEST: SUCCESS\n");
+   printf("main_list_creates_head: OK!\n");
    free(mem.pointer);
    return 0;
 }
@@ -157,8 +166,8 @@ int main_inserts_a_bunch_into_list_tail()
    list_for_each(the_list, print_element, NULL);
    printf("\n");
 
+   printf("main_inserts_a_bunch_into_list_tail: OK!\n");
    free(mem.pointer);
-   printf("main_inserts_a_bunch_into_list_tail: OK\n");
    return 0;
 }
 
@@ -200,6 +209,7 @@ int main_checks_foreach()
    assert(*(int*)(the_list->head->next->next->next->value) == 401);
    assert(*(int*)(the_list->head->next->next->next->next->value) == 501);
 
+   printf("main_checks_foreach: OK!\n");   
    free(mem.pointer);
    return 0;
 }
@@ -250,6 +260,7 @@ int main_checks_find_if()
    struct List* not_found = list_find_first_if(the_list, greater_than, greater_than_this);
    assert(!not_found);
 
+   printf("main_checks_find_if: OK!\n");
    free(mem.pointer);
    return 0;
 }
@@ -307,11 +318,12 @@ int main_deletes_head()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
+   printf("main_deletes_head: OK!\n");
    free(mem.pointer);
    return 0;
 }
 
-int main/*_deletes_tail*/()
+int main_deletes_tail()
 {
    Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
@@ -369,6 +381,7 @@ int main/*_deletes_tail*/()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
+   printf("main_deletes_tail: OK!\n");
    free(mem.pointer);
    return 0;
 }
