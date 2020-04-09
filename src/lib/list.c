@@ -16,16 +16,45 @@ struct List* list_create_head(Memory* memory, void* new_value)
    return new_list;
 }
 
+extern struct List* list_create_empty(Memory* memory)
+{
+   assert(memory);
+
+   struct List* new_list = memory_allocate(memory, sizeof(struct List));
+   new_list->head = NULL;
+   new_list->tail = NULL;
+   new_list->next = NULL;
+   new_list->previous = NULL;
+   new_list->value = NULL;
+}
+
+extern int list_is_empty(struct List* list)
+{
+   assert(list);
+
+   return list->head == NULL && 
+          list->tail == NULL &&
+          list->next == NULL &&
+          list->previous == NULL &&
+          list->value == NULL;
+}
+
 void list_insert_tail(Memory* memory, struct List* list, void* new_value)
 {
+   assert(memory);
+   assert(list);
+
    struct List* new_node = memory_allocate(memory, sizeof(struct List));
    new_node->value = new_value;
    new_node->previous = list->tail;
    new_node->next = NULL;
-   new_node->head = list->head;
+   new_node->head = list_is_empty(list) ? new_node : list->head;
    new_node->tail = new_node;
 
-   list->tail->next = new_node;
+   if(list_is_empty(list))
+      list->head = new_node;
+   if(list->tail)
+      list->tail->next = new_node;
    list->tail = new_node;
 }
 

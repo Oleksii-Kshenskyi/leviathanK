@@ -386,7 +386,7 @@ int main_deletes_tail()
    return 0;
 }
 
-int main/*_deletes_middle_element*/()
+int main_deletes_middle_element()
 {
    Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
@@ -445,6 +445,55 @@ int main/*_deletes_middle_element*/()
    printf("\n");
 
    printf("main_deletes_middle_element: OK!\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_creates_empty_list_and_inserts_into_it()
+{
+   Memory mem = memory_create(0.5 * KB);
+
+   struct List* empty_list = list_create_empty(&mem);
+
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 3;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 8;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 0;
+
+   //trying to foreach an empty list
+   list_for_each(empty_list, print_element, NULL);
+   list_reverse_for_each(empty_list, print_element, NULL);
+
+   list_insert_tail(&mem, empty_list, val1);
+   printf("\n==== AFTER INSERTION 1 ====\n");
+   assert(*(int*)empty_list->head->value == 3);
+   assert(*(int*)empty_list->tail->value == 3);
+   list_for_each(empty_list, print_element, NULL);
+   printf("\n==== AFTER INSERTION 1 REVERSE ====\n");
+   list_reverse_for_each(empty_list, print_element, NULL);
+   printf("\n");
+
+   list_insert_tail(&mem, empty_list, val2);
+   printf("\n==== AFTER INSERTION 2 ====\n");
+   assert(*(int*)empty_list->head->value == 3);
+   assert(*(int*)empty_list->tail->value == 8);
+   list_for_each(empty_list, print_element, NULL);
+   printf("\n==== AFTER INSERTION 2 REVERSE ====\n");
+   list_reverse_for_each(empty_list, print_element, NULL);
+   printf("\n");
+
+   list_insert_tail(&mem, empty_list, val3);
+   printf("\n==== AFTER INSERTION 3 ====\n");
+   assert(*(int*)empty_list->head->value == 3);
+   assert(*(int*)empty_list->tail->value == 0);
+   list_for_each(empty_list, print_element, NULL);
+   printf("\n==== AFTER INSERTION 3 REVERSE ====\n");
+   list_reverse_for_each(empty_list, print_element, NULL);
+   printf("\n");
+
+   printf("main_creates_empty_list_and_inserts_into_it: OK\n");
    free(mem.pointer);
    return 0;
 }
