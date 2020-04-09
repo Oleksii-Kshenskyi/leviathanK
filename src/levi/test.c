@@ -280,17 +280,31 @@ int main/*_deletes_head*/()
    list_insert_tail(&mem, the_list, val5);
 
    printf("==== BEFORE DELETION ====\n");
+   assert(*(int*)the_list->head->value == 132);
+   assert(*(int*)the_list->tail->value == 500348);
    list_for_each(the_list, print_element, NULL);
+   printf("\n==== BEFORE DELETION REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
    int equal_to_this = 132;
    list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
    printf("\n==== AFTER DELETION ====\n");
+   assert(*(int*)the_list->head->value == 428);
+   assert(*(int*)the_list->tail->value == 500348);
    list_for_each(the_list, print_element, NULL);
+   printf("\n");
+   printf("\n==== AFTER DELETION REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
    equal_to_this = 428;
    list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
    printf("\n==== AFTER DELETION 2 ====\n");
+   assert(*(int*)the_list->head->value == 201);
+   assert(*(int*)the_list->tail->value == 500348);
    list_for_each(the_list, print_element, NULL);
+   printf("\n");
+   printf("\n==== AFTER DELETION 2 REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
    /*equal_to_this = 201;

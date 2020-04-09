@@ -22,6 +22,7 @@ typedef int (*list_find_predicate)(struct List* element, void* data);
 extern struct List* list_create_head(Memory* memory, void* new_value);
 extern void list_insert_tail(Memory* memory, struct List* list, void* new_value);
 extern void list_for_each(struct List* list, foreach_handler_func handler, void* data);
+extern void list_reverse_for_each(struct List* list, foreach_handler_func handler, void* data);
 extern struct List* list_find_first_if(struct List* list, list_find_predicate predicate, void* data);
 extern void list_delete_first_if(struct List** list_ptr, list_delete_predicate predicate, void* data);
 

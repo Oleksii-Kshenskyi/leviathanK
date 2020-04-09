@@ -43,6 +43,20 @@ void list_for_each(struct List* list, foreach_handler_func handler, void* data)
    }
 }
 
+void list_reverse_for_each(struct List* list, foreach_handler_func handler, void* data)
+{
+   assert(list);
+   assert(handler);
+
+   struct List* current = list->tail;
+
+   while(current)
+   {
+      handler(current, data);
+      current = current->previous;
+   }
+}
+
 struct List* list_find_first_if(struct List* list, list_find_predicate predicate, void* data)
 {
    assert(list);
@@ -60,16 +74,12 @@ struct List* list_find_first_if(struct List* list, list_find_predicate predicate
 static void list_delete_head(struct List** list_ptr)
 {
    assert(list_ptr);
-   /*struct List* delete_me = *list_ptr;
-   assert(delete_me);*/
 
    (*list_ptr)->next->tail = (*list_ptr)->tail;
 
    *list_ptr = (*list_ptr)->next;
    (*list_ptr)->head = *list_ptr;
    (*list_ptr)->head->previous = NULL;
-   printf("*(int*)(*list_ptr)->head->value = %d\n", *(int*)(*list_ptr)->head->value);
-   printf("*(int*)(*list_ptr)->tail->value = %d\n", *(int*)(*list_ptr)->tail->value);
 }
 
 static void list_delete_tail(struct List* list)
