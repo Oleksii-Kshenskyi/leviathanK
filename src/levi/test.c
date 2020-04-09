@@ -260,7 +260,7 @@ int equal_to(struct List* element, void* equal_to_what)
    return (*(int*)element->value == what) ? TRUE : FALSE;
 }
 
-int main/*_deletes_head*/()
+int main_deletes_head()
 {
    Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
@@ -307,9 +307,68 @@ int main/*_deletes_head*/()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   /*equal_to_this = 201;
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_deletes_tail*/()
+{
+   Memory mem = memory_create(0.5 * KB);
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 132;
+   int* val2 = memory_allocate(&mem, 1 * sizeof(int));
+   *val2 = 428;
+   int* val3 = memory_allocate(&mem, 1 * sizeof(int));
+   *val3 = 201;
+   int* val4 = memory_allocate(&mem, 1 * sizeof(int));
+   *val4 = 9001;
+   int* val5 = memory_allocate(&mem, 1 * sizeof(int));
+   *val5 = 500348;
+   struct List* the_list = list_create_head(&mem, val1);
+   list_insert_tail(&mem, the_list, val2);
+   list_insert_tail(&mem, the_list, val3);
+   list_insert_tail(&mem, the_list, val4);
+   list_insert_tail(&mem, the_list, val5);
+
+   printf("==== BEFORE DELETION ====\n");
+   assert(*(int*)the_list->head->value == 132);
+   assert(*(int*)the_list->tail->value == 500348);
+   list_for_each(the_list, print_element, NULL);
+   printf("\n==== BEFORE DELETION REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
+   int equal_to_this = 500348;
+   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   printf("\n==== AFTER DELETION ====\n");
+   assert(*(int*)the_list->head->value == 132);
+   assert(*(int*)the_list->tail->value == 9001);
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+   printf("\n==== AFTER DELETION REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   equal_to_this = 9001;
+   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   printf("\n==== AFTER DELETION 2 ====\n");
+   assert(*(int*)the_list->head->value == 132);
+   assert(*(int*)the_list->tail->value == 201);
+   list_for_each(the_list, print_element, NULL);
+   printf("\n");
+   printf("\n==== AFTER DELETION 2 REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   equal_to_this = 201;
    list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
    printf("\n==== AFTER DELETION 3 ====\n");
+   assert(*(int*)the_list->head->value == 132);
+   assert(*(int*)the_list->tail->value == 428);
    list_for_each(the_list, print_element, NULL);
-   printf("\n");*/
+   printf("\n");
+   printf("\n==== AFTER DELETION 3 REVERSE ====\n");
+   list_reverse_for_each(the_list, print_element, NULL);
+   printf("\n");
+
+   free(mem.pointer);
+   return 0;
 }
