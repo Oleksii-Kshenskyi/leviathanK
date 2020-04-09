@@ -60,18 +60,16 @@ struct List* list_find_first_if(struct List* list, list_find_predicate predicate
 static void list_delete_head(struct List** list_ptr)
 {
    assert(list_ptr);
-   struct List* delete_me = *list_ptr;
-   assert(delete_me);
+   /*struct List* delete_me = *list_ptr;
+   assert(delete_me);*/
 
-   delete_me->next->tail = delete_me->tail;
+   (*list_ptr)->next->tail = (*list_ptr)->tail;
 
-   delete_me->head = delete_me->next;
-   delete_me->head->previous = NULL;
-   printf("*list_ptr->head = %p\n", (*list_ptr)->head);
-   printf("*(int*)list_ptr->head->value = %d\n", *(int*)(*list_ptr)->head->value);
-   *list_ptr = delete_me->head;
-   printf("*list_ptr->head = %p\n", (*list_ptr)->head);
-   printf("*(int*)list_ptr->head->value = %d\n", *(int*)(*list_ptr)->head->value);
+   *list_ptr = (*list_ptr)->next;
+   (*list_ptr)->head = *list_ptr;
+   (*list_ptr)->head->previous = NULL;
+   printf("*(int*)(*list_ptr)->head->value = %d\n", *(int*)(*list_ptr)->head->value);
+   printf("*(int*)(*list_ptr)->tail->value = %d\n", *(int*)(*list_ptr)->tail->value);
 }
 
 static void list_delete_tail(struct List* list)
