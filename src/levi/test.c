@@ -118,7 +118,10 @@ void check_head_tail_integrity(struct List* list)
 
 void print_element(struct List* element, void* data)
 {
-   printf("element = %d\n", *(int*)element->value);
+   if(!element->value)
+      printf("element = [EMPTY]\n");
+   else
+      printf("element = %d\n", *(int*)element->value);
 }
 
 int main_inserts_a_bunch_into_list_tail()
@@ -265,10 +268,15 @@ int main_checks_find_if()
    return 0;
 }
 
-int equal_to(struct List* element, void* equal_to_what)
+int equal_to_int(struct List* element, void* equal_to_what)
 {
    int what = *(int*)equal_to_what;
    return (*(int*)element->value == what) ? TRUE : FALSE;
+}
+
+int equal_to_pointer(struct List* element, void* equal_to_what)
+{
+   return (element->value == equal_to_what) ? TRUE : FALSE;
 }
 
 int main_deletes_head()
@@ -296,8 +304,8 @@ int main_deletes_head()
    list_for_each(the_list, print_element, NULL);
    printf("\n==== BEFORE DELETION REVERSE ====\n");
    list_reverse_for_each(the_list, print_element, NULL);
-   int equal_to_this = 132;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   int equal_to_int_this = 132;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION ====\n");
    assert(*(int*)the_list->head->value == 428);
    assert(*(int*)the_list->tail->value == 500348);
@@ -307,8 +315,8 @@ int main_deletes_head()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   equal_to_this = 428;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   equal_to_int_this = 428;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION 2 ====\n");
    assert(*(int*)the_list->head->value == 201);
    assert(*(int*)the_list->tail->value == 500348);
@@ -348,8 +356,8 @@ int main_deletes_tail()
    list_for_each(the_list, print_element, NULL);
    printf("\n==== BEFORE DELETION REVERSE ====\n");
    list_reverse_for_each(the_list, print_element, NULL);
-   int equal_to_this = 500348;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   int equal_to_int_this = 500348;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 9001);
@@ -359,8 +367,8 @@ int main_deletes_tail()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   equal_to_this = 9001;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   equal_to_int_this = 9001;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION 2 ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 201);
@@ -370,8 +378,8 @@ int main_deletes_tail()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   equal_to_this = 201;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   equal_to_int_this = 201;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION 3 ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 428);
@@ -411,8 +419,8 @@ int main_deletes_middle_element()
    list_for_each(the_list, print_element, NULL);
    printf("\n==== BEFORE DELETION REVERSE ====\n");
    list_reverse_for_each(the_list, print_element, NULL);
-   int equal_to_this = 428;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   int equal_to_int_this = 428;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 500348);
@@ -422,8 +430,8 @@ int main_deletes_middle_element()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   equal_to_this = 201;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   equal_to_int_this = 201;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION 2 ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 500348);
@@ -433,8 +441,8 @@ int main_deletes_middle_element()
    list_reverse_for_each(the_list, print_element, NULL);
    printf("\n");
 
-   equal_to_this = 9001;
-   list_delete_first_if(&the_list, equal_to, (void*) &equal_to_this);
+   equal_to_int_this = 9001;
+   list_delete_first_if(&the_list, equal_to_int, (void*) &equal_to_int_this);
    printf("\n==== AFTER DELETION 3 ====\n");
    assert(*(int*)the_list->head->value == 132);
    assert(*(int*)the_list->tail->value == 500348);
@@ -513,7 +521,7 @@ int main_deletes_the_only_list_element()
    assert(empty_list->head->value == val1);
 
    printf("\n==== AFTER DELETION ====\n");
-   list_delete_first_if(&empty_list, equal_to, val1);
+   list_delete_first_if(&empty_list, equal_to_int, val1);
    list_for_each(empty_list, print_element, NULL);
    printf("\n");
 
@@ -542,11 +550,11 @@ int main_checks_subsequent_deletion_and_insertion()
    assert(*(int*)list->head->next->next->value == val3);
 
    printf("[STATUS] insertion OK, deleting all the elements...\n");
-   list_delete_first_if(&list, equal_to, (void*)&val1);
+   list_delete_first_if(&list, equal_to_int, (void*)&val1);
    assert(*(int*)list->head->value == val2);
-   list_delete_first_if(&list, equal_to, (void*)&val2);
+   list_delete_first_if(&list, equal_to_int, (void*)&val2);
    assert(*(int*)list->head->value == val3);
-   list_delete_first_if(&list, equal_to, (void*)&val3);
+   list_delete_first_if(&list, equal_to_int, (void*)&val3);
    assert(list_is_empty(list));
    printf("[STATUS] Deleted everything, checked that the list is empty...\n");
 
@@ -565,11 +573,11 @@ int main_checks_subsequent_deletion_and_insertion()
    printf("[STATUS] Inserted the 3 values, checked each step, all OK...\n");
 
    printf("[STATUS] And now back to an empty list...\n");
-   list_delete_first_if(&list, equal_to, (void*)&val4);
+   list_delete_first_if(&list, equal_to_int, (void*)&val4);
    assert(*(int*)list->head->value == val5);
-   list_delete_first_if(&list, equal_to, (void*)&val5);
+   list_delete_first_if(&list, equal_to_int, (void*)&val5);
    assert(*(int*)list->head->value == val6);
-   list_delete_first_if(&list, equal_to, (void*)&val6);
+   list_delete_first_if(&list, equal_to_int, (void*)&val6);
    assert(list_is_empty(list));
    printf("[STATUS] List is empty again, everything looks fine!\n");
 
@@ -589,26 +597,74 @@ int main_tries_to_delete_from_empty_list()
    printf("[STATUS] Inserting 1 into the list, but trying to delete 2...\n");
    int temp = 1; int wrong_value = 2;
    list_insert_tail(&mem, empty_list, (void*)&temp);
-   list_delete_first_if(&empty_list, equal_to, (void*)&wrong_value);
+   list_delete_first_if(&empty_list, equal_to_int, (void*)&wrong_value);
    printf("[STATUS] Checking that 1 is still there and is the only element...\n");
    assert(*(int*)empty_list->head->value == temp);
    assert(*(int*)empty_list->tail->value == temp);
    printf("[STATUS] Check successful, deleting the 1...\n");
-   list_delete_first_if(&empty_list, equal_to, (void*)&temp);
+   list_delete_first_if(&empty_list, equal_to_int, (void*)&temp);
    assert(list_is_empty(empty_list));
    printf("[STATUS] Deletion successful, list is empty...\n");
 
    printf("[STATUS] Trying to delete a 1 from an empty list...\n");
-   list_delete_first_if(&empty_list, equal_to, (void*)&temp);
+   list_delete_first_if(&empty_list, equal_to_int, (void*)&temp);
    assert(list_is_empty(empty_list));
    printf("[STATUS] All OK, list is still empty...\n");
 
    printf("[STATUS] Now trying to delete a NULL from an empty list...\n");
-   list_delete_first_if(&empty_list, equal_to, NULL);
+   list_delete_first_if(&empty_list, equal_to_int, NULL);
    assert(list_is_empty(empty_list));
    printf("[STATUS] All OK, list is still empty!\n");
 
    printf("main_tries_to_delete_from_empty_list: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_deletes_null_elements_from_list*/()
+{
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("\nmain_deletes_null_elements_from_list:\n");
+   printf("[STATUS] Creating a list of elements: [1, NULL, 3, NULL]\n");
+   int val1 = 1; int val3 = 3;
+   struct List* list = list_create_empty(&mem);
+   list_insert_tail(&mem, list, (void*)&val1);
+   list_insert_tail(&mem, list, NULL);
+   list_insert_tail(&mem, list, (void*)&val3);
+   list_insert_tail(&mem, list, NULL);
+   assert(*(int*)list->head->value == val1);
+   assert(list->head->next->value == NULL);
+   assert(*(int*)list->head->next->next->value == val3);
+   assert(list->head->next->next->next->value == NULL);
+   printf("[STATUS] Insertion successful, list created as expected...\n");
+
+   printf("[STATUS] Trying to print out a list with NULLs...\n");
+   list_for_each(list, print_element, NULL);
+
+   printf("[STATUS] Deleting the first NULL from the list...\n");
+   list_delete_first_if(&list, equal_to_pointer, NULL);
+   assert(*(int*)list->head->value == val1);
+   assert(*(int*)list->head->next->value == val3);
+   assert(list->head->next->next->value == NULL);
+   printf("[STATUS] Deleting the first NULL sucessful...\n");
+
+   printf("[STATUS] Deleting the second NULL from the list...\n");
+   list_delete_first_if(&list, equal_to_pointer, NULL);
+   assert(*(int*)list->head->value == val1);
+   assert(*(int*)list->head->next->value == val3);
+   assert(*(int*)list->head->value == val1);
+   assert(*(int*)list->tail->value == val3);
+   printf("[STATUS] Deleting the second NULL sucessful...\n");
+
+   printf("[STATUS] Printing out the resulting list...\n");
+   list_for_each(list, print_element, NULL);
+
+   printf("[STATUS] Printing out the resulting list in reverse...\n");
+   list_reverse_for_each(list, print_element, NULL);
+
+   printf("[STATUS] All seems to be OK...\n");
+   printf("main_deletes_null_elements_from_list: OK\n");
    free(mem.pointer);
    return 0;
 }
