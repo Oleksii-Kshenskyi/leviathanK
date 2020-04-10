@@ -497,3 +497,31 @@ int main_creates_empty_list_and_inserts_into_it()
    free(mem.pointer);
    return 0;
 }
+
+int main_deletes_the_only_list_element()
+{
+   Memory mem = memory_create(0.5 * KB);
+
+   struct List* empty_list = list_create_empty(&mem);
+
+   int* val1 = memory_allocate(&mem, 1 * sizeof(int));
+   *val1 = 111;
+   list_insert_tail(&mem, empty_list, val1);
+
+   printf("\n==== BEFORE DELETION ====\n");
+   list_for_each(empty_list, print_element, NULL);
+   assert(empty_list->head->value == val1);
+
+   printf("\n==== AFTER DELETION ====\n");
+   list_delete_first_if(&empty_list, equal_to, val1);
+   list_for_each(empty_list, print_element, NULL);
+   printf("\n");
+
+   printf("\n==== AFTER DELETION REVERSE ====\n");
+   list_reverse_for_each(empty_list, print_element, NULL);
+   printf("\n");
+
+   printf("main_deletes_the_only_list_element: OK\n");
+   free(mem.pointer);
+   return 0;
+}

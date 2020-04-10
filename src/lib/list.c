@@ -39,20 +39,35 @@ extern int list_is_empty(struct List* list)
           list->value == NULL;
 }
 
+static void list_insert_into_empty(struct List* list, void* new_value)
+{
+   assert(list);
+
+   list->head = list;
+   list->tail = list;
+   list->next = NULL;
+   list->previous = NULL;
+   list->value = new_value;
+}
+
 void list_insert_tail(Memory* memory, struct List* list, void* new_value)
 {
    assert(memory);
    assert(list);
 
+   if(list_is_empty(list))
+   {
+      list_insert_into_empty(list, new_value);
+      return;
+   }
+
    struct List* new_node = memory_allocate(memory, sizeof(struct List));
    new_node->value = new_value;
    new_node->previous = list->tail;
    new_node->next = NULL;
-   new_node->head = list_is_empty(list) ? new_node : list->head;
+   new_node->head = list->head;
    new_node->tail = new_node;
 
-   if(list_is_empty(list))
-      list->head = new_node;
    if(list->tail)
       list->tail->next = new_node;
    list->tail = new_node;
@@ -62,6 +77,12 @@ void list_for_each(struct List* list, foreach_handler_func handler, void* data)
 {
    assert(list);
    assert(handler);
+
+   if(list_is_empty(list))
+   {
+      printf("[WARNING] List is empty, list_for_each() did nothing...\n");
+      return;
+   }
 
    struct List* current = list->head;
 
@@ -76,6 +97,12 @@ void list_reverse_for_each(struct List* list, foreach_handler_func handler, void
 {
    assert(list);
    assert(handler);
+
+   if(list_is_empty(list))
+   {
+      printf("[WARNING] List is empty, list_reverse_for_each() did nothing...\n");
+      return;
+   }
 
    struct List* current = list->tail;
 
@@ -98,6 +125,17 @@ struct List* list_find_first_if(struct List* list, list_find_predicate predicate
    }
 
    return current;
+}
+
+static void list_delete_only_element(struct List* list)
+{
+   assert(list);
+
+   list->head = NULL;
+   list->next = NULL;
+   list->previous = NULL;
+   list->tail = NULL;
+   list->value = NULL;
 }
 
 static void list_delete_head(struct List** list_ptr)
@@ -143,7 +181,9 @@ extern void list_delete_first_if(struct List** list_ptr, list_delete_predicate p
    struct List* delete_me = list_find_first_if(list, predicate, data);
    assert(delete_me);
 
-   if(delete_me == list->head && delete_me == list)
+   if(delete_me == list->head && delete_me == list->tail && delete_me == list)
+      list_delete_only_element(list);
+   else if(delete_me == list->head && delete_me == list)
       list_delete_head(list_ptr);
    else if(delete_me == list->tail)
       list_delete_tail(list);
