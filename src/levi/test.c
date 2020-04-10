@@ -577,3 +577,38 @@ int main_checks_subsequent_deletion_and_insertion()
    free(mem.pointer);
    return 0;
 }
+
+int main_tries_to_delete_from_empty_list()
+{
+   Memory mem = memory_create(0.1 * KB);
+
+   struct List* empty_list = list_create_empty(&mem);
+   assert(list_is_empty(empty_list));
+
+   printf("\nmain_tries_to_delete_from_empty_list:\n");
+   printf("[STATUS] Inserting 1 into the list, but trying to delete 2...\n");
+   int temp = 1; int wrong_value = 2;
+   list_insert_tail(&mem, empty_list, (void*)&temp);
+   list_delete_first_if(&empty_list, equal_to, (void*)&wrong_value);
+   printf("[STATUS] Checking that 1 is still there and is the only element...\n");
+   assert(*(int*)empty_list->head->value == temp);
+   assert(*(int*)empty_list->tail->value == temp);
+   printf("[STATUS] Check successful, deleting the 1...\n");
+   list_delete_first_if(&empty_list, equal_to, (void*)&temp);
+   assert(list_is_empty(empty_list));
+   printf("[STATUS] Deletion successful, list is empty...\n");
+
+   printf("[STATUS] Trying to delete a 1 from an empty list...\n");
+   list_delete_first_if(&empty_list, equal_to, (void*)&temp);
+   assert(list_is_empty(empty_list));
+   printf("[STATUS] All OK, list is still empty...\n");
+
+   printf("[STATUS] Now trying to delete a NULL from an empty list...\n");
+   list_delete_first_if(&empty_list, equal_to, NULL);
+   assert(list_is_empty(empty_list));
+   printf("[STATUS] All OK, list is still empty!\n");
+
+   printf("main_tries_to_delete_from_empty_list: OK\n");
+   free(mem.pointer);
+   return 0;
+}

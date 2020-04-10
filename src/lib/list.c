@@ -179,7 +179,8 @@ extern void list_delete_first_if(struct List** list_ptr, list_delete_predicate p
    assert(predicate);
 
    struct List* delete_me = list_find_first_if(list, predicate, data);
-   assert(delete_me);
+   if(!delete_me)
+      return;
 
    if(delete_me == list->head && delete_me == list->tail && delete_me == list)
       list_delete_only_element(list);
