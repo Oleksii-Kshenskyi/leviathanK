@@ -525,3 +525,55 @@ int main_deletes_the_only_list_element()
    free(mem.pointer);
    return 0;
 }
+
+int main_checks_subsequent_deletion_and_insertion()
+{
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("\nmain_checks_subsequent_deletion_and_insertion:\n");
+   printf("[STATUS] creating list with 3 elements: 33, 5151, 70815...\n");
+   int val1 = 33; int val2 = 5151; int val3 = 70815;
+   struct List* list = list_create_empty(&mem);
+   list_insert_tail(&mem, list, (void*)&val1);
+   list_insert_tail(&mem, list, (void*)&val2);
+   list_insert_tail(&mem, list, (void*)&val3);
+   assert(*(int*)list->head->value == val1);
+   assert(*(int*)list->head->next->value == val2);
+   assert(*(int*)list->head->next->next->value == val3);
+
+   printf("[STATUS] insertion OK, deleting all the elements...\n");
+   list_delete_first_if(&list, equal_to, (void*)&val1);
+   assert(*(int*)list->head->value == val2);
+   list_delete_first_if(&list, equal_to, (void*)&val2);
+   assert(*(int*)list->head->value == val3);
+   list_delete_first_if(&list, equal_to, (void*)&val3);
+   assert(list_is_empty(list));
+   printf("[STATUS] Deleted everything, checked that the list is empty...\n");
+
+   printf("[STATUS] Now inserting 3 different ints...\n");
+   printf("[STATUS] Inserting 480, 0, 871515...\n");
+   int val4 = 480; int val5 = 0; int val6 = 871515;
+   list_insert_tail(&mem, list, (void*)&val4);
+   assert(*(int*)list->head->value == val4);
+   assert(*(int*)list->tail->value == val4);
+   list_insert_tail(&mem, list, (void*)&val5);
+   assert(*(int*)list->head->value == val4);
+   assert(*(int*)list->tail->value == val5);
+   list_insert_tail(&mem, list, (void*)&val6);
+   assert(*(int*)list->head->value == val4);
+   assert(*(int*)list->tail->value == val6);
+   printf("[STATUS] Inserted the 3 values, checked each step, all OK...\n");
+
+   printf("[STATUS] And now back to an empty list...\n");
+   list_delete_first_if(&list, equal_to, (void*)&val4);
+   assert(*(int*)list->head->value == val5);
+   list_delete_first_if(&list, equal_to, (void*)&val5);
+   assert(*(int*)list->head->value == val6);
+   list_delete_first_if(&list, equal_to, (void*)&val6);
+   assert(list_is_empty(list));
+   printf("[STATUS] List is empty again, everything looks fine!\n");
+
+   printf("main_checks_subsequent_deletion_and_insertion: OK\n");
+   free(mem.pointer);
+   return 0;
+}
