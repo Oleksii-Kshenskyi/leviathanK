@@ -621,7 +621,7 @@ int main_tries_to_delete_from_empty_list()
    return 0;
 }
 
-int main/*_deletes_null_elements_from_list*/()
+int main_deletes_null_elements_from_list()
 {
    Memory mem = memory_create(0.5 * KB);
 
@@ -665,6 +665,24 @@ int main/*_deletes_null_elements_from_list*/()
 
    printf("[STATUS] All seems to be OK...\n");
    printf("main_deletes_null_elements_from_list: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_creates_root_path_tree_node*/()
+{
+   printf("\nmain_creates_root_path_tree_node:\n");
+   printf("[STATUS] Allocating memory and creating path tree root...\n");
+   Memory mem = memory_create(0.5 * KB);
+   struct PathTree* root = path_tree_create(&mem);
+
+   printf("[STATUS] Making sure root fields have expected values...\n");
+   assert(root->children == NULL);
+   assert(root->node_value == NULL);
+   assert(!strcmp(root->node_name, ROOT_NAME));
+
+   printf("[STATUS] Path tree root seems to have been created properly!\n");
+   printf("main_creates_root_path_tree_node: OK\n");
    free(mem.pointer);
    return 0;
 }
