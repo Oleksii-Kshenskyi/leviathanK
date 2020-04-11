@@ -15,3 +15,14 @@ struct PathTree* path_tree_create(Memory* memory)
 
    return root;
 }
+
+void path_tree_insert(Memory* memory, char* path, char* value)
+{
+   assert(memory);
+   assert(path);
+}
+
+void path_tree_print(struct PathTree* tree)
+{
+   assert(tree);
+}

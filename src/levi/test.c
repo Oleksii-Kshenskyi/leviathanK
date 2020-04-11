@@ -669,7 +669,7 @@ int main_deletes_null_elements_from_list()
    return 0;
 }
 
-int main/*_creates_root_path_tree_node*/()
+int main_creates_root_path_tree_node()
 {
    printf("\nmain_creates_root_path_tree_node:\n");
    printf("[STATUS] Allocating memory and creating path tree root...\n");
@@ -683,6 +683,45 @@ int main/*_creates_root_path_tree_node*/()
 
    printf("[STATUS] Path tree root seems to have been created properly!\n");
    printf("main_creates_root_path_tree_node: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_util_builds_paths_correctly*/()
+{
+   printf("main_util_builds_paths_correctly:\n");
+   printf("[STATUS] Creating 10 KB memory...\n");
+   Memory mem = memory_create(10 * KB);
+
+   printf("[STATUS] Checking old + new names == \"\"...\n");
+   char* path = util_build_path_prefix(&mem, "", "");
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking old_path == \"\"...\n");
+   path = util_build_path_prefix(&mem, "", "new path");
+   assert(!strcmp(path, "new path"));
+
+   printf("[STATUS] Checking new_name == \"\"...\n");
+   path = util_build_path_prefix(&mem, "old/one/two", "");
+   assert(!strcmp(path, "old/one/two"));
+
+   printf("[STATUS] Sequentially building path one/two/three/four/five/siz...\n");
+   path = util_build_path_prefix(&mem, "", "old");
+   assert(!strcmp(path, "old"));
+   path = util_build_path_prefix(&mem, path, "one");
+   assert(!strcmp(path, "old/one"));
+   path = util_build_path_prefix(&mem, path, "two");
+   assert(!strcmp(path, "old/one/two"));
+   path = util_build_path_prefix(&mem, path, "three");
+   assert(!strcmp(path, "old/one/two/three"));
+   path = util_build_path_prefix(&mem, path, "four");
+   assert(!strcmp(path, "old/one/two/three/four"));
+   path = util_build_path_prefix(&mem, path, "five");
+   assert(!strcmp(path, "old/one/two/three/four/five"));
+   path = util_build_path_prefix(&mem, path, "siz");
+   assert(!strcmp(path, "old/one/two/three/four/five/siz"));
+
+   printf("main_util_builds_paths_correctly: OK\n");
    free(mem.pointer);
    return 0;
 }
