@@ -15,7 +15,7 @@ struct PathTree
 };
 
 extern struct PathTree* path_tree_create(Memory* memory);
-extern void path_tree_insert(Memory* memory, char* path, char* value);
+extern void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value);
 extern void path_tree_print(struct PathTree* tree);
 
 #endif

@@ -16,7 +16,7 @@ struct List* list_create_head(Memory* memory, void* new_value)
    return new_list;
 }
 
-extern struct List* list_create_empty(Memory* memory)
+struct List* list_create_empty(Memory* memory)
 {
    assert(memory);
 
@@ -28,7 +28,7 @@ extern struct List* list_create_empty(Memory* memory)
    new_list->value = NULL;
 }
 
-extern int list_is_empty(struct List* list)
+int list_is_empty(struct List* list)
 {
    assert(list);
 
