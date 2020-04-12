@@ -1,6 +1,6 @@
 .SILENT: all clean run compile justrun rebuild
 
-all: compile
+all: rebuild justrun
 
 compile:
 	mkdir -p build
