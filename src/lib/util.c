@@ -41,3 +41,29 @@ char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name)
 
    return result;
 }
+
+char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
+{
+   assert(memory);
+   assert(path_ptr);
+   char* path = *path_ptr;
+   assert(path);
+
+   if(util_string_is_null_or_empty(path))
+      return path;
+
+   int index = 0;
+   for(index; index < strlen(path); index++)
+   {
+      if(path[index] == '/')
+      {
+         char* chopped_off = memory_allocate(memory, index + 2);
+         strncpy(chopped_off, path, index);
+         *path_ptr = path + index + 1;
+         return chopped_off;
+      }
+   }
+
+   *path_ptr = path + index;
+   return path;
+}

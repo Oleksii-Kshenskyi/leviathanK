@@ -11,5 +11,6 @@ extern int util_string_is_null_or_empty(char* cstr);
 
 // path tree utility functions
 extern char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name);
+extern char* util_chop_current_name_off_path(Memory* memory, char** path_ptr);
 
 #endif
