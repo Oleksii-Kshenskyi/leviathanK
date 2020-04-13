@@ -1,11 +1,11 @@
-.SILENT: all clean run compile justrun rebuild
+.SILENT: all clean run compile justrun rebuild win
 
 all: rebuild justrun
 
 compile:
 	mkdir -p build
-	cd build && cmake ..
-	cd build && make
+	cd build && cmake .. -G "Ninja"
+	cd build && ninja
 
 clean:
 	rm -rf build
@@ -17,3 +17,6 @@ run: compile
 
 justrun: build/leviathanK
 	build/leviathanK
+
+win: clean compile
+	build/leviathanK.exe

@@ -59,6 +59,7 @@ char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
       {
          char* chopped_off = memory_allocate(memory, index + 2);
          strncpy(chopped_off, path, index);
+         chopped_off[index] = '\0';
          *path_ptr = path + index + 1;
          return chopped_off;
       }
