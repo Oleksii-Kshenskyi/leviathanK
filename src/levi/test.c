@@ -690,8 +690,8 @@ int main_creates_root_path_tree_node()
 int main_util_builds_paths_correctly()
 {
    printf("main_util_builds_paths_correctly:\n");
-   printf("[STATUS] Creating 10 KB memory...\n");
-   Memory mem = memory_create(10 * KB);
+   printf("[STATUS] Creating 2 KB memory...\n");
+   Memory mem = memory_create(2 * KB);
 
    printf("[STATUS] Checking old + new names == \"\"...\n");
    char* path = util_build_path_prefix(&mem, "", "");

@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 
+#define B 1
 #define KB 1024
 #define MB (KB * 1024)
 #define GB (MB * 1024)

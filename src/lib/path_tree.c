@@ -16,6 +16,20 @@ struct PathTree* path_tree_create(Memory* memory)
    return root;
 }
 
+int path_tree_is_empty(struct PathTree* tree)
+{
+   assert(tree);
+
+   return (!tree->children && !strcmp(tree->node_name, ROOT_NAME));
+}
+
+int path_tree_is_root_node(struct PathTree* node)
+{
+   assert(node);
+
+   return (!strcmp(node->node_name, ROOT_NAME));
+}
+
 static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* path, char* value)
 {
    assert(memory);
@@ -115,7 +129,41 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_create_path(memory, creation_point, path, value);
 }
 
+/* static void path_tree_print_element(struct List* element, void* data)
+{
+   assert(element);
+
+   struct PathTree* tree_element = (struct PathTree*) element->value;
+   char* current_path_prefix = (char*)data;
+
+   // 1. print current node's full path and value
+   if(tree_element->node_value)
+   {
+      printf("%s: ", tree_element->node_name);
+      printf("%s\n", tree_element->node_value);
+   }
+   else
+      printf("%s: [EMPTY]\n", tree_element->node_name);
+   
+
+   // 2. call path_tree_print() on current tree element if
+   //    its children are not NULL
+   if(tree_element->children)
+      path_tree_print((struct PathTree*)tree_element->children->head->value);
+}*/
+
 void path_tree_print(struct PathTree* tree)
 {
    assert(tree);
+
+   /*if(path_tree_is_empty(tree))
+   {
+      printf("[EMPTY]\n");
+      return;
+   }
+
+   char* path_prefix = util_build_path_prefix((path_tree_is_root_node(tree) ? 
+                          )
+   if(tree->children)
+      list_for_each(tree->children, path_tree_print_element);*/
 }
