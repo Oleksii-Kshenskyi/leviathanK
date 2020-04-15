@@ -31,3 +31,13 @@ void memory_clear(Memory* memory)
 
    memory->size = 0;
 }
+
+extern void memory_usage_status(Memory* memory)
+{
+   assert(memory);
+
+   printf("[Memory at %p status] [%dB/%luB] used.\n",
+          memory->pointer,
+          memory->size,
+          memory->capacity);
+}
