@@ -621,7 +621,7 @@ int main_tries_to_delete_from_empty_list()
    return 0;
 }
 
-int main/*_deletes_null_elements_from_list*/()
+int main_deletes_null_elements_from_list()
 {
    Memory mem = memory_create(0.5 * KB);
 
@@ -665,6 +665,17 @@ int main/*_deletes_null_elements_from_list*/()
 
    printf("[STATUS] All seems to be OK...\n");
    printf("main_deletes_null_elements_from_list: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_investigate_double_alloc_bug()
+{
+   printf("main_investigate_double_alloc_bug:\n");
+   Memory mem = memory_create(10);
+
+   memory_usage_status(&mem);
+   printf("main_investigate_double_alloc_bug: OK\n");
    free(mem.pointer);
    return 0;
 }
