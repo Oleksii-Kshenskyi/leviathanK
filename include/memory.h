@@ -20,5 +20,6 @@ typedef struct
 extern Memory memory_create(long long capacity);
 extern void* memory_allocate(Memory* memory, size_t alloc_size);
 extern void memory_clear(Memory* memory);
+extern void memory_usage_status(Memory* memory);
 
 #endif
