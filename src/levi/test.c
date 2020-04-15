@@ -669,7 +669,7 @@ int main_deletes_null_elements_from_list()
    return 0;
 }
 
-int main_creates_root_path_tree_node()
+int main/*_creates_root_path_tree_node*/()
 {
    printf("\nmain_creates_root_path_tree_node:\n");
    printf("[STATUS] Allocating memory and creating path tree root...\n");
@@ -681,6 +681,7 @@ int main_creates_root_path_tree_node()
    assert(root->node_value == NULL);
    assert(!strcmp(root->node_name, ROOT_NAME));
 
+   path_tree_print(root);
    printf("[STATUS] Path tree root seems to have been created properly!\n");
    printf("main_creates_root_path_tree_node: OK\n");
    free(mem.pointer);
@@ -721,6 +722,7 @@ int main_util_builds_paths_correctly()
    path = util_build_path_prefix(&mem, path, "siz");
    assert(!strcmp(path, "old/one/two/three/four/five/siz"));
 
+   memory_usage_status(&mem);
    printf("main_util_builds_paths_correctly: OK\n");
    free(mem.pointer);
    return 0;
@@ -736,7 +738,7 @@ void chop_off_single_pass(Memory* mem, char** full_path,
    assert(!strcmp(*full_path, full_path_expected));
 }
 
-int main/*_chops_names_off_paths*/()
+int main_chops_names_off_paths()
 {
    printf("\nmain_chops_names_off_paths:\n");
    Memory mem = memory_create(0.5 * KB);
@@ -792,6 +794,18 @@ int main/*_chops_names_off_paths*/()
 
    printf("\n[STATUS] All the chopping off seems to have been done correctly!\n");
    printf("main_chops_names_off_paths: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_investigate_double_alloc_bug()
+{
+   printf("main_investigate_double_alloc_bug:\n");
+   Memory mem = memory_create(10);
+
+   memory_usage_status(&mem);
+   printf("main_investigate_double_alloc_bug: OK\n");
+
    free(mem.pointer);
    return 0;
 }

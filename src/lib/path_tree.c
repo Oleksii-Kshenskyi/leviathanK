@@ -129,6 +129,13 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_create_path(memory, creation_point, path, value);
 }
 
+struct PrintTreeInternal
+{
+   Memory* throwaway_memory;
+   char* current_path_prefix;
+   char* copy_buffer;
+};
+
 /* static void path_tree_print_element(struct List* element, void* data)
 {
    assert(element);
@@ -152,17 +159,44 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_print((struct PathTree*)tree_element->children->head->value);
 }*/
 
+void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
+{
+   if(tree->children &&
+      !buffers->current_path_prefix &&
+      !buffers->copy_buffer)
+   {
+      buffers->current_path_prefix = memory_allocate(
+                                       buffers->throwaway_memory,
+                                       (THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1)
+                                     );
+      buffers->copy_buffer = memory_allocate(
+                               buffers->throwaway_memory,
+                               (THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1)
+                             );
+   }
+}
+
 void path_tree_print(struct PathTree* tree)
 {
    assert(tree);
 
-   /*if(path_tree_is_empty(tree))
+   if(path_tree_is_empty(tree))
    {
       printf("[EMPTY]\n");
       return;
    }
 
-   char* path_prefix = util_build_path_prefix((path_tree_is_root_node(tree) ? 
+   Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
+   struct PrintTreeInternal throwaway_buffers = {
+      .throwaway_memory = &throwaway_memory,
+      .current_path_prefix = NULL,
+      .copy_buffer = NULL
+   };
+   path_tree_print_internal(tree, &throwaway_buffers);
+
+   free(throwaway_memory.pointer);
+
+   /*char* path_prefix = util_build_path_prefix((path_tree_is_root_node(tree) ?
                           )
    if(tree->children)
       list_for_each(tree->children, path_tree_print_element);*/

@@ -6,6 +6,7 @@
 #include "util.h"
 
 #define ROOT_NAME "[ROOT]"
+#define THROWAWAY_MEMORY_SIZE_FOR_PRINT 10 * KB
 
 struct PathTree
 {

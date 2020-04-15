@@ -1,4 +1,4 @@
-.SILENT: all clean run compile justrun rebuild win
+.SILENT: all clean run compile justrun rebuild win valgrind
 
 all: rebuild justrun
 
@@ -17,6 +17,9 @@ run: compile
 
 justrun: build/leviathanK
 	build/leviathanK
+
+valgrind: compile
+	valgrind -s build/leviathanK
 
 win: clean compile
 	build/leviathanK.exe

@@ -3,7 +3,7 @@
 
 #include "memory.h"
 
-Memory memory_create(long long capacity)
+Memory memory_create(size_t capacity)
 {
    assert(capacity > 0);
 
