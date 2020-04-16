@@ -141,30 +141,33 @@ static int path_tree_are_internal_print_bufs_empty(struct PrintTreeInternal* buf
    return !bufs->copy_buffer && !bufs->current_path_prefix;
 }
 
-/* static void path_tree_print_element(struct List* element, void* data)
+static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers);
+
+static void path_tree_print_element(struct List* element, void* data)
 {
    assert(element);
 
    struct PathTree* tree_element = (struct PathTree*) element->value;
-   char* current_path_prefix = (char*)data;
+   struct PrintTreeInternal* buffers = (struct PrintTreeInternal*) data;
 
-   // 1. print current node's full path and value
+   if(!tree_element)
+      return;
+
+   assert(tree_element->node_name);
+   util_build_path_prefix_noalloc(&buffers->current_path_prefix, 
+                                  tree_element->node_name);
    if(tree_element->node_value)
-   {
-      printf("%s: ", tree_element->node_name);
-      printf("%s\n", tree_element->node_value);
-   }
+      printf("%s: %s\n", 
+             buffers->current_path_prefix, 
+             tree_element->node_value);
    else
       printf("%s: [EMPTY]\n", tree_element->node_name);
-   
 
-   // 2. call path_tree_print() on current tree element if
-   //    its children are not NULL
    if(tree_element->children)
-      path_tree_print((struct PathTree*)tree_element->children->head->value);
-}*/
+      path_tree_print_internal((struct PathTree*)tree_element->children->head->value, buffers);
+}
 
-void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
+static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
 {
    if(tree->children &&
       path_tree_are_internal_print_bufs_empty(buffers))
@@ -181,7 +184,8 @@ void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* b
       memset(buffers->current_path_prefix, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1);
    }
 
-
+   if(tree->children)
+      list_for_each(tree->children, path_tree_print_element, buffers);
 }
 
 void path_tree_print(struct PathTree* tree)
@@ -190,7 +194,7 @@ void path_tree_print(struct PathTree* tree)
 
    if(path_tree_is_empty(tree))
    {
-      printf("[EMPTY]\n");
+      printf("%s: [EMPTY]\n", tree->node_name);
       return;
    }
 
@@ -203,9 +207,4 @@ void path_tree_print(struct PathTree* tree)
    path_tree_print_internal(tree, &throwaway_buffers);
 
    free(throwaway_memory.pointer);
-
-   /*char* path_prefix = util_build_path_prefix((path_tree_is_root_node(tree) ?
-                          )
-   if(tree->children)
-      list_for_each(tree->children, path_tree_print_element);*/
 }
