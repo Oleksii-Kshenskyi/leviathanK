@@ -19,7 +19,7 @@ justrun: build/leviathanK
 	build/leviathanK
 
 valgrind: compile
-	valgrind -s build/leviathanK
+	valgrind -s --leak-check=full --show-leak-kinds=all build/leviathanK
 
 win: clean compile
 	build/leviathanK.exe

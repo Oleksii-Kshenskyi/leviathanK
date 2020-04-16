@@ -84,9 +84,6 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
    if(util_string_is_null_or_empty(*path_ptr))
       return NULL;
 
-   if(!throwaway_memory)
-      *throwaway_memory = memory_create(strlen(*path_ptr) * 3);
-
    char* looking_for_this = util_chop_current_name_off_path(throwaway_memory, path_ptr);
    struct List* node_on_correct_path = 
                list_find_first_if(tree->children,
@@ -119,14 +116,17 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       return;
    }
 
+   Memory throwaway_memory = memory_create(strlen(path) * 3);
    struct PathTree* creation_point = 
                         path_tree_find_starting_point_for_path_creation(
-                              memory, NULL, tree, &path
+                              memory, &throwaway_memory, tree, &path
                         );
    if(!creation_point)
       path_tree_create_path(memory, tree, original_path, value);
    else
       path_tree_create_path(memory, creation_point, path, value);
+
+   free(throwaway_memory.pointer);
 }
 
 struct PrintTreeInternal

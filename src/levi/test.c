@@ -728,7 +728,7 @@ int main_util_builds_paths_correctly()
    return 0;
 }
 
-int main/*_util_builds_paths_noalloc_correctly*/()
+int main_util_builds_paths_noalloc_correctly()
 {
    printf("\nmain_util_builds_paths_noalloc_correctly:\n");
    printf("[STATUS] Creating 2 KB memory...\n");
@@ -854,6 +854,36 @@ int main_investigate_double_alloc_bug()
    memory_usage_status(&mem);
    printf("main_investigate_double_alloc_bug: OK\n");
 
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_inserts_into_path_tree_and_prints_it*/()
+{
+   printf("\nmain_inserts_into_path_tree_and_prints_it:\n");
+   Memory mem = memory_create(10 * KB);
+
+   printf("\n[STATUS] Printing an empty newly created tree...\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting one node [one/two/three] and printing that out...\n");
+   path_tree_insert(&mem, tree, "one/two/three", "3");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting a completely unrelated node [I/am/a/bit/impressed!]...\n");
+   path_tree_insert(&mem, tree, "I/am/a/bit/impressed!", "No I am not lol");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting a related node [one/two/super/cool/big piece of shit!] now...\n");
+   path_tree_insert(&mem, tree, "one/two/super/cool/big piece of shit!", "shit");
+   path_tree_print(tree);
+   printf("\n[STATUS] Inserting a gigantic path node [Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", "No I\'m lying lol");
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("main_inserts_into_path_tree_and_prints_it: OK\n");
    free(mem.pointer);
    return 0;
 }
