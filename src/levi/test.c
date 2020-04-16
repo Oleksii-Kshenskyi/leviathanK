@@ -669,7 +669,7 @@ int main_deletes_null_elements_from_list()
    return 0;
 }
 
-int main/*_creates_root_path_tree_node*/()
+int main_creates_root_path_tree_node()
 {
    printf("\nmain_creates_root_path_tree_node:\n");
    printf("[STATUS] Allocating memory and creating path tree root...\n");
@@ -724,6 +724,54 @@ int main_util_builds_paths_correctly()
 
    memory_usage_status(&mem);
    printf("main_util_builds_paths_correctly: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_util_builds_paths_noalloc_correctly*/()
+{
+   printf("\nmain_util_builds_paths_noalloc_correctly:\n");
+   printf("[STATUS] Creating 2 KB memory...\n");
+   Memory mem = memory_create(2 * KB);
+
+   printf("[STATUS] Allocating path buffer...\n");
+   char* path = memory_allocate(&mem, 1 * KB);
+
+   printf("[STATUS] Checking old + new names == \"\"...\n");
+   strcpy(path, "");
+   util_build_path_prefix_noalloc(&path, "");
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking old_path == \"\"...\n");
+   util_build_path_prefix_noalloc(&path, "new path");
+
+   assert(!strcmp(path, "new path"));
+
+   printf("[STATUS] Checking new_name == \"\"...\n");
+   strcpy(path, "old/one/two");
+   util_build_path_prefix_noalloc(&path, "");
+   assert(!strcmp(path, "old/one/two"));
+
+   printf("[STATUS] Sequentially building path one/two/three/four/five/siz...\n");
+   strcpy(path, "");
+   util_build_path_prefix_noalloc(&path, "old");
+   assert(!strcmp(path, "old"));
+   util_build_path_prefix_noalloc(&path, "one");
+   assert(!strcmp(path, "old/one"));
+   util_build_path_prefix_noalloc(&path, "two");
+   assert(!strcmp(path, "old/one/two"));
+   util_build_path_prefix_noalloc(&path, "three");
+   assert(!strcmp(path, "old/one/two/three"));
+   util_build_path_prefix_noalloc(&path, "four");
+   assert(!strcmp(path, "old/one/two/three/four"));
+   util_build_path_prefix_noalloc(&path, "five");
+   assert(!strcmp(path, "old/one/two/three/four/five"));
+   util_build_path_prefix_noalloc(&path, "siz");
+   assert(!strcmp(path, "old/one/two/three/four/five/siz"));
+
+   memory_usage_status(&mem);
+   printf("[STATUS] All seems fine, all asserts passed...\n");
+   printf("main_util_builds_paths_noalloc_correctly: OK\n");
    free(mem.pointer);
    return 0;
 }

@@ -26,7 +26,7 @@ char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name)
    assert(old_path);
    assert(new_name);
 
-   if(util_string_is_null_or_empty(old_path) && 
+   if(util_string_is_null_or_empty(old_path) &&
       util_string_is_null_or_empty(new_name))
       return util_string_create(memory, "", 0);
    else if (util_string_is_null_or_empty(old_path))
@@ -40,6 +40,27 @@ char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name)
    strcat(result, new_name);
 
    return result;
+}
+
+void util_build_path_prefix_noalloc(char** old_path_ptr, char* new_name)
+{
+   assert(old_path_ptr);
+   assert(*old_path_ptr);
+   assert(new_name);
+
+   if(util_string_is_null_or_empty(*old_path_ptr) && 
+      util_string_is_null_or_empty(new_name))
+      return;
+   else if (util_string_is_null_or_empty(*old_path_ptr))
+   {
+      strcat(*old_path_ptr, new_name);
+      return;
+   }
+   else if (util_string_is_null_or_empty(new_name))
+      return;
+
+   strcat(*old_path_ptr, "/");
+   strcat(*old_path_ptr, new_name);
 }
 
 char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)

@@ -136,6 +136,11 @@ struct PrintTreeInternal
    char* copy_buffer;
 };
 
+static int path_tree_are_internal_print_bufs_empty(struct PrintTreeInternal* bufs)
+{
+   return !bufs->copy_buffer && !bufs->current_path_prefix;
+}
+
 /* static void path_tree_print_element(struct List* element, void* data)
 {
    assert(element);
@@ -162,8 +167,7 @@ struct PrintTreeInternal
 void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
 {
    if(tree->children &&
-      !buffers->current_path_prefix &&
-      !buffers->copy_buffer)
+      path_tree_are_internal_print_bufs_empty(buffers))
    {
       buffers->current_path_prefix = memory_allocate(
                                        buffers->throwaway_memory,
@@ -173,7 +177,11 @@ void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* b
                                buffers->throwaway_memory,
                                (THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1)
                              );
+      memset(buffers->copy_buffer, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1);
+      memset(buffers->current_path_prefix, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1);
    }
+
+
 }
 
 void path_tree_print(struct PathTree* tree)
