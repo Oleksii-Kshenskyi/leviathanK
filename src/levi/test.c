@@ -860,6 +860,9 @@ int main_investigate_double_alloc_bug()
 
 int main/*_inserts_into_path_tree_and_prints_it*/()
 {
+   // a gdb print command to see the second element of the tree:
+   // print *(struct PathTree*)((*(struct List*)(*(struct PathTree*)tree->children->value)->children)->value)
+
    printf("\nmain_inserts_into_path_tree_and_prints_it:\n");
    Memory mem = memory_create(10 * KB);
 

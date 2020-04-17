@@ -10,7 +10,7 @@ struct PathTree* path_tree_create(Memory* memory)
    struct PathTree* root = memory_allocate(memory, sizeof(struct PathTree));
    root->children = NULL;
    root->node_value = NULL;
-   root->node_name = memory_allocate(memory, strlen(ROOT_NAME + 1));
+   root->node_name = memory_allocate(memory, strlen(ROOT_NAME) + 1);
    strcpy(root->node_name, ROOT_NAME);
 
    return root;
@@ -54,6 +54,7 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
       new_node->node_value = value;
 
    new_node->children = NULL;
+
    tree->children = list_create_head(
       memory, (struct PathTree*) new_node
    );
@@ -161,10 +162,10 @@ static void path_tree_print_element(struct List* element, void* data)
              buffers->current_path_prefix, 
              tree_element->node_value);
    else
-      printf("%s: [EMPTY]\n", tree_element->node_name);
+      printf("%s: [EMPTY]\n", buffers->current_path_prefix);
 
    if(tree_element->children)
-      path_tree_print_internal((struct PathTree*)tree_element->children->head->value, buffers);
+      path_tree_print_internal(tree_element, buffers);   //(struct PathTree*)tree_element->children->head->value, buffers);
 }
 
 static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
