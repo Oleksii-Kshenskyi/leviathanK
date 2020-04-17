@@ -127,6 +127,7 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
                         );
    if(!creation_point)
    {
+      printf("[DEBUG] Creation point does not exist...\n");
       // TODO: extract this into a separate function
       // call it something like "path_tree_create_new_branch_on_this_node()"
       struct PathTree* new_node = path_tree_create(memory);
@@ -139,7 +140,10 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_create_path(memory, tree->children->tail->value, original_path, value);
    }
    else
+   {
+      printf("[DEBUG] Creation point exists and reported as [%p]...\n", creation_point);
       path_tree_create_path(memory, creation_point, path, value);
+   }
 
    free(throwaway_memory.pointer);
 }
@@ -151,7 +155,7 @@ struct PrintTreeInternal
    char* copy_buffer;
 };
 
-static int path_tree_are_internal_print_bufs_empty(struct PrintTreeInternal* bufs)
+static int path_tree_are_internal_print_bufs_null(struct PrintTreeInternal* bufs)
 {
    return !bufs->copy_buffer && !bufs->current_path_prefix;
 }
@@ -169,23 +173,27 @@ static void path_tree_print_element(struct List* element, void* data)
       return;
 
    assert(tree_element->node_name);
+
    util_build_path_prefix_noalloc(&buffers->current_path_prefix, 
                                   tree_element->node_name);
    if(tree_element->node_value)
-      printf("%s: %s\n", 
+      printf("%s: %s [%p]\n", 
              buffers->current_path_prefix, 
-             tree_element->node_value);
+             tree_element->node_value,
+             tree_element);
    else
-      printf("%s: [EMPTY]\n", buffers->current_path_prefix);
+      printf("%s: [EMPTY] [%p]\n", buffers->current_path_prefix, tree_element);
 
    if(tree_element->children)
-      path_tree_print_internal(tree_element, buffers);   //(struct PathTree*)tree_element->children->head->value, buffers);
+      path_tree_print_internal(tree_element, buffers);
+
+   util_unbuild_path_prefix_once(buffers->current_path_prefix);
 }
 
 static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
 {
    if(tree->children &&
-      path_tree_are_internal_print_bufs_empty(buffers))
+      path_tree_are_internal_print_bufs_null(buffers))
    {
       buffers->current_path_prefix = memory_allocate(
                                        buffers->throwaway_memory,

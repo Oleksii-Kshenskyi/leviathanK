@@ -776,6 +776,57 @@ int main_util_builds_paths_noalloc_correctly()
    return 0;
 }
 
+int main_unbuilds_path_prefix()
+{
+   printf("\nmain_unbuilds_path_prefix:\n");
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("[STATUS] Checking sequentially unbuilding the following path:\n");
+   printf("         Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!\n");
+   char* path = memory_allocate(&mem, strlen("Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!") + 1);
+   
+   strcpy(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!");
+
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking unbuilding \"\" to result in a \"\"...\n");
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking a string with junk being unbuilt to \"\" correctly...\n");
+   strcpy(path, "a bunch of @ random ! junk kek without a slash.");
+   assert(!strcmp(path, "a bunch of @ random ! junk kek without a slash."));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "")); 
+
+   memory_usage_status(&mem);
+   printf("main_unbuilds_path_prefix: OK\n");
+   free(mem.pointer);
+}
+
 void chop_off_single_pass(Memory* mem, char** full_path, 
                       char* chopped_off_expected, char* full_path_expected)
 {
@@ -869,21 +920,29 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    printf("\n[STATUS] Printing an empty newly created tree...\n");
    struct PathTree* tree = path_tree_create(&mem);
    path_tree_print(tree);
+   printf("\n");
 
-   printf("\n[STATUS] Inserting one node [one/two/three] and printing that out...\n");
+   printf("\n[STATUS] Inserting two nodes, [one] and [one/two/three] and printing that out...\n");
+   printf("[STATUS] node 'one' will be equal to 1 and node one/two/three to 3...\n");
+   path_tree_insert(&mem, tree, "one", "1");
    path_tree_insert(&mem, tree, "one/two/three", "3");
    path_tree_print(tree);
+   printf("\n");
 
    printf("\n[STATUS] Inserting a completely unrelated node [I/am/a/bit/impressed!]...\n");
    path_tree_insert(&mem, tree, "I/am/a/bit/impressed!", "No I am not lol");
    path_tree_print(tree);
+   printf("\n");
 
    printf("\n[STATUS] Inserting a related node [one/two/super/cool/big piece of shit!] now...\n");
    path_tree_insert(&mem, tree, "one/two/super/cool/big piece of shit!", "shit");
    path_tree_print(tree);
+   printf("\n");
+
    printf("\n[STATUS] Inserting a gigantic path node [Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!] now...\n");
    path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", "No I\'m lying lol");
    path_tree_print(tree);
+   printf("\n");
 
    memory_usage_status(&mem);
    printf("main_inserts_into_path_tree_and_prints_it: OK\n");

@@ -63,6 +63,17 @@ void util_build_path_prefix_noalloc(char** old_path_ptr, char* new_name)
    strcat(*old_path_ptr, new_name);
 }
 
+void util_unbuild_path_prefix_once(char* path)
+{
+   assert(path);
+
+   char* last_separator = strrchr(path, '/');
+   if(last_separator)
+      *last_separator = '\0';
+   else
+      *path = '\0';
+}
+
 char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
 {
    assert(memory);
