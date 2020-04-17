@@ -55,12 +55,15 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
 
    new_node->children = NULL;
 
-   tree->children = list_create_head(
-      memory, (struct PathTree*) new_node
-   );
+   if(!tree->children)
+      tree->children = list_create_head(
+         memory, (struct PathTree*) new_node
+      );
+   else if(!list_is_empty(tree->children))
+      list_insert_tail(memory, tree->children, new_node);
 
    path_tree_create_path(memory,
-                         (struct PathTree*) tree->children->value,
+                         (struct PathTree*) tree->children->tail->value,
                          path, value
    );
 }
@@ -123,7 +126,18 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
                               memory, &throwaway_memory, tree, &path
                         );
    if(!creation_point)
-      path_tree_create_path(memory, tree, original_path, value);
+   {
+      // TODO: extract this into a separate function
+      // call it something like "path_tree_create_node_as_child()"
+      struct PathTree* new_node = path_tree_create(memory);
+      new_node->node_name = util_chop_current_name_off_path(memory, &original_path);
+      new_node->node_value = NULL;
+      new_node->children = NULL;
+      list_insert_tail(memory, tree->children, new_node);
+      // end of path_tree_create_node_as_child()
+
+      path_tree_create_path(memory, tree->children->tail->value, original_path, value);
+   }
    else
       path_tree_create_path(memory, creation_point, path, value);
 
