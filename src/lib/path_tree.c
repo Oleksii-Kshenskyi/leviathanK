@@ -141,6 +141,24 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
             NULL;
 }
 
+static void path_tree_create_new_branch_on_this_node(
+   Memory* memory,
+   struct PathTree* tree_to_insert_into,
+   char* new_node_name
+)
+{
+   assert(memory);
+   assert(tree_to_insert_into);
+   assert(tree_to_insert_into->children);
+   assert(new_node_name);
+
+   struct PathTree* new_node = path_tree_create(memory);
+   new_node->node_name = new_node_name;
+   new_node->node_value = NULL;
+   new_node->children = NULL;
+   list_insert_tail(memory, tree_to_insert_into->children, new_node);
+}
+
 void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value)
 {
    assert(memory);
@@ -172,14 +190,8 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
                         );
    if(!creation_point)
    {
-      // TODO: extract this into a separate function
-      // call it something like "path_tree_create_new_branch_on_this_node()"
-      struct PathTree* new_node = path_tree_create(memory);
-      new_node->node_name = util_chop_current_name_off_path(memory, &original_path);
-      new_node->node_value = NULL;
-      new_node->children = NULL;
-      list_insert_tail(memory, tree->children, new_node);
-      // end of path_tree_create_new_branch_on_this_node()
+      char* new_node_name = util_chop_current_name_off_path(memory, &original_path);
+      path_tree_create_new_branch_on_this_node(memory, tree, new_node_name);
 
       path_tree_create_path(memory, tree->children->tail->value, original_path, value);
    }
