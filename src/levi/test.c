@@ -963,17 +963,26 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    printf("           [one/two/three], and printing that out...\n");
    printf("[STATUS] node 'one/kek' will be equal to 'w' and node one/two/three to 3...\n"); // '.../diversion' to 'bgg'
    printf("[NOTE] Each will be printed with separate print calls...\n");
+
    printf("\n[STATUS] Inserting [one/kek] and printing out...\n");
    path_tree_insert(&mem, tree, "one/kek", "w");
    path_tree_print(tree);
+
    printf("\n[STATUS] Inserting [one/kek/safe] and printing out...\n");
    path_tree_insert(&mem, tree, "one/kek/safe", "safe");
    path_tree_print(tree);
+
    printf("\n[STATUS] Inserting [this/is/a/diversion] and printing out...\n");
    path_tree_insert(&mem, tree, "this/is/a/diversion", "bgg");
    path_tree_print(tree);
+
    printf("\n[STATUS] Inserting [one/two/three] and printing out...\n");
    path_tree_insert(&mem, tree, "one/two/three", "3");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Trying to insert a value of [2!!] into an existing node [one/two]...\n");
+   path_tree_insert(&mem, tree, "one/two", "2!!");
    path_tree_print(tree);
    printf("\n");
 
@@ -1002,8 +1011,46 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    path_tree_print(tree);
    printf("\n");
 
+   printf("\n[STATUS] Trying to insert a value of [WOOW] into an existing node [Hekek/a/pretty]...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty", "WOOW");
+   path_tree_print(tree);
+   printf("\n");
+
    memory_usage_status(&mem);
    printf("main_inserts_into_path_tree_and_prints_it: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+struct PathTree* creates_tree_and_inserts_two_nodes(Memory* mem)
+{
+   printf("\ncreates_tree_and_inserts_two_nodes:\n");
+
+   printf("\n[STATUS] Creating a new tree and inserting [the/first/path] = [1st]...\n");
+   struct PathTree* tree = path_tree_create(mem);
+   path_tree_insert(mem, tree, "the/first/path", "1st");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting a cheeky node [the/cheeky/path] = [cheekst]...\n");
+   path_tree_insert(mem, tree, "the/cheeky/path", "cheekst");
+   path_tree_print(tree);
+
+   return tree;
+}
+
+int main_tests_path_tree_insertion_and_going_out_of_context()
+{
+   printf("\nmain_tests_path_tree_insertion_and_going_out_of_context:\n");
+   Memory mem = memory_create(1 * KB);
+
+   printf("[STATUS] Calling a separate function to create a tree for me...\n");
+   struct PathTree* tree = creates_tree_and_inserts_two_nodes(&mem);
+
+   printf("\n[STATUS] main is printing out a tree it got from the function...\n");
+   path_tree_print(tree);
+
+   printf("main_tests_path_tree_insertion_and_going_out_of_context: OK\n");
+   memory_usage_status(&mem);
    free(mem.pointer);
    return 0;
 }

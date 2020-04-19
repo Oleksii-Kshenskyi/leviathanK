@@ -37,7 +37,10 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
    assert(path);
 
    if(util_string_is_null_or_empty(path))
+   {
+      tree->node_value = value;
       return;
+   }
 
    char* new_node_name = util_chop_current_name_off_path(
       memory, &path
