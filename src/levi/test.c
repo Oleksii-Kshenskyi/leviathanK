@@ -669,6 +669,271 @@ int main_deletes_null_elements_from_list()
    return 0;
 }
 
+int main_creates_root_path_tree_node()
+{
+   printf("\nmain_creates_root_path_tree_node:\n");
+   printf("[STATUS] Allocating memory and creating path tree root...\n");
+   Memory mem = memory_create(0.5 * KB);
+   struct PathTree* root = path_tree_create(&mem);
+
+   printf("[STATUS] Making sure root fields have expected values...\n");
+   assert(root->children == NULL);
+   assert(root->node_value == NULL);
+   assert(!strcmp(root->node_name, ROOT_NAME));
+
+   path_tree_print(root);
+   printf("[STATUS] Path tree root seems to have been created properly!\n");
+   printf("main_creates_root_path_tree_node: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_util_builds_paths_correctly()
+{
+   printf("main_util_builds_paths_correctly:\n");
+   printf("[STATUS] Creating 2 KB memory...\n");
+   Memory mem = memory_create(2 * KB);
+
+   printf("[STATUS] Checking old + new names == \"\"...\n");
+   char* path = util_build_path_prefix(&mem, "", "");
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking old_path == \"\"...\n");
+   path = util_build_path_prefix(&mem, "", "new path");
+   assert(!strcmp(path, "new path"));
+
+   printf("[STATUS] Checking new_name == \"\"...\n");
+   path = util_build_path_prefix(&mem, "old/one/two", "");
+   assert(!strcmp(path, "old/one/two"));
+
+   printf("[STATUS] Sequentially building path one/two/three/four/five/siz...\n");
+   path = util_build_path_prefix(&mem, "", "old");
+   assert(!strcmp(path, "old"));
+   path = util_build_path_prefix(&mem, path, "one");
+   assert(!strcmp(path, "old/one"));
+   path = util_build_path_prefix(&mem, path, "two");
+   assert(!strcmp(path, "old/one/two"));
+   path = util_build_path_prefix(&mem, path, "three");
+   assert(!strcmp(path, "old/one/two/three"));
+   path = util_build_path_prefix(&mem, path, "four");
+   assert(!strcmp(path, "old/one/two/three/four"));
+   path = util_build_path_prefix(&mem, path, "five");
+   assert(!strcmp(path, "old/one/two/three/four/five"));
+   path = util_build_path_prefix(&mem, path, "siz");
+   assert(!strcmp(path, "old/one/two/three/four/five/siz"));
+
+   memory_usage_status(&mem);
+   printf("main_util_builds_paths_correctly: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_util_builds_paths_noalloc_correctly()
+{
+   printf("\nmain_util_builds_paths_noalloc_correctly:\n");
+   printf("[STATUS] Creating 2 KB memory...\n");
+   Memory mem = memory_create(2 * KB);
+
+   printf("[STATUS] Allocating path buffer...\n");
+   char* path = memory_allocate(&mem, 1 * KB);
+
+   printf("[STATUS] Checking old + new names == \"\"...\n");
+   strcpy(path, "");
+   util_build_path_prefix_noalloc(&path, "");
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking old_path == \"\"...\n");
+   util_build_path_prefix_noalloc(&path, "new path");
+
+   assert(!strcmp(path, "new path"));
+
+   printf("[STATUS] Checking new_name == \"\"...\n");
+   strcpy(path, "old/one/two");
+   util_build_path_prefix_noalloc(&path, "");
+   assert(!strcmp(path, "old/one/two"));
+
+   printf("[STATUS] Sequentially building path one/two/three/four/five/siz...\n");
+   strcpy(path, "");
+   util_build_path_prefix_noalloc(&path, "old");
+   assert(!strcmp(path, "old"));
+   util_build_path_prefix_noalloc(&path, "one");
+   assert(!strcmp(path, "old/one"));
+   util_build_path_prefix_noalloc(&path, "two");
+   assert(!strcmp(path, "old/one/two"));
+   util_build_path_prefix_noalloc(&path, "three");
+   assert(!strcmp(path, "old/one/two/three"));
+   util_build_path_prefix_noalloc(&path, "four");
+   assert(!strcmp(path, "old/one/two/three/four"));
+   util_build_path_prefix_noalloc(&path, "five");
+   assert(!strcmp(path, "old/one/two/three/four/five"));
+   util_build_path_prefix_noalloc(&path, "siz");
+   assert(!strcmp(path, "old/one/two/three/four/five/siz"));
+
+   memory_usage_status(&mem);
+   printf("[STATUS] All seems fine, all asserts passed...\n");
+   printf("main_util_builds_paths_noalloc_correctly: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_unbuilds_path_prefix()
+{
+   printf("\nmain_unbuilds_path_prefix:\n");
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("[STATUS] Checking sequentially unbuilding the following path:\n");
+   printf("         Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!\n");
+   char* path = memory_allocate(&mem, strlen("Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!") + 1);
+   
+   strcpy(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!");
+
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything/in"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do/anything"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that/doesn't do"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path/that"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long/path"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty/long"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a/pretty"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek/a"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "Hekek"));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking unbuilding \"\" to result in a \"\"...\n");
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, ""));
+
+   printf("[STATUS] Checking a string with junk being unbuilt to \"\" correctly...\n");
+   strcpy(path, "a bunch of @ random ! junk kek without a slash.");
+   assert(!strcmp(path, "a bunch of @ random ! junk kek without a slash."));
+   util_unbuild_path_prefix_once(path);
+   assert(!strcmp(path, "")); 
+
+   memory_usage_status(&mem);
+   printf("main_unbuilds_path_prefix: OK\n");
+   free(mem.pointer);
+}
+
+int main_checks_unbuilds_to_equal()
+{
+   printf("\nmain_checks_unbuild_to_equal:\n");
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("[STATUS] Checking if [please/do/this/properly] unbuilds to [please/do/this]...\n");
+   char* path = util_string_create(&mem, "please/do/this/properly", 64);
+   char* check_equal_to = util_string_create(&mem, "please/do/this", 64);
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [please] unbuilds to []...\n");
+   strcpy(path, "so");
+   strcpy(check_equal_to, "");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [] unbuilds to []...\n");
+   strcpy(path, "");
+   strcpy(check_equal_to, "");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [s/t] unbuilds to [s]...\n");
+   strcpy(path, "s/t");
+   strcpy(check_equal_to, "s");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [!@#$#$$!@#*&*&(&/@@@] unbuilds to [!@#$#$$!@#*&*&(&]...\n");
+   strcpy(path, "!@#$#$$!@#*&*&(&/@@@");
+   strcpy(check_equal_to, "!@#$#$$!@#*&*&(&");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   memory_usage_status(&mem);
+   printf("main_checks_unbuild_to_equal: OK\n");
+   free(mem.pointer);
+}
+
+void chop_off_single_pass_noalloc(char** full_path, 
+                      char* chopped_off_expected, char* full_path_expected)
+{
+   // printf("\n==== CHOP OFF ITERATION ====\n");
+   char* chopped_off = util_chop_current_name_off_path_noalloc(full_path);
+   // printf("Chopped off = [%s]\nPath = [%s]\n", chopped_off, *full_path);
+   // printf("Chopped off expected = [%s]\nPath expected = [%s]\n", chopped_off_expected, full_path_expected);
+   assert(!strcmp(chopped_off, chopped_off_expected));
+   assert(!strcmp(*full_path, full_path_expected));
+}
+
+int main_chops_names_off_paths_noalloc()
+{
+   printf("\nmain_chops_names_off_paths_noalloc:\n");
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("[STATUS] Checking chopping off empty string.\n");
+   printf("         Both chopped off name and path should be empty...\n");
+   char* full_path = util_string_create(&mem, "", 10);
+   assert(!strcmp(full_path, ""));
+   char* chopped_off = util_chop_current_name_off_path_noalloc(&full_path);
+   assert(!strcmp(chopped_off, ""));
+   assert(!strcmp(full_path, ""));
+
+   printf("[STATUS] Now checking full path without path separator [/].\n");
+   printf("         Chopped off value should be equal to the original path,\n");
+   printf("         while the path itself should be empty...\n");
+   full_path = util_string_create(&mem, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg", 0);
+   assert(!strcmp(full_path, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg"));
+   chopped_off = util_chop_current_name_off_path_noalloc(&full_path);
+   assert(!strcmp(chopped_off, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg"));
+   assert(!strcmp(full_path, ""));
+
+   printf("[STATUS] Now checking sequentially chopping chunks off the following path:\n");
+   printf("         Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!\n");
+   full_path = util_string_create(&mem, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", 0);
+   assert(!strcmp(full_path, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!"));
+
+   chop_off_single_pass_noalloc(&full_path, "Hekek", 
+                        "a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "a", 
+                        "pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "pretty", 
+                        "long/path/that/doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "long", 
+                        "path/that/doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "path", 
+                        "that/doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "that", 
+                        "doesn\'t do/anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "doesn\'t do", 
+                        "anything/in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "anything", 
+                        "in/particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "in", 
+                        "particular/honestly!");
+   chop_off_single_pass_noalloc(&full_path, "particular", 
+                        "honestly!");
+   chop_off_single_pass_noalloc(&full_path, "honestly!", 
+                        "");
+   chop_off_single_pass_noalloc(&full_path, "", 
+                        "");
+   chop_off_single_pass_noalloc(&full_path, "", 
+                        "");
+
+   printf("\n[STATUS] All the chopping off seems to have been done correctly!\n");
+   memory_usage_status(&mem);
+   printf("main_chops_names_off_paths_noalloc: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
 int main_investigate_double_alloc_bug()
 {
    printf("main_investigate_double_alloc_bug:\n");
@@ -676,6 +941,235 @@ int main_investigate_double_alloc_bug()
 
    memory_usage_status(&mem);
    printf("main_investigate_double_alloc_bug: OK\n");
+
    free(mem.pointer);
+   return 0;
+}
+
+int main/*_inserts_into_path_tree_and_prints_it*/()
+{
+   // a gdb print command to see the second element of the tree:
+   // print *(struct PathTree*)((*(struct List*)(*(struct PathTree*)tree->children->value)->children)->value)
+
+   printf("\nmain_inserts_into_path_tree_and_prints_it:\n");
+   Memory mem = memory_create(10 * KB);
+
+   printf("\n[STATUS] Printing an empty newly created tree...\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Inserting to path [c] and printing out...\n");
+   path_tree_insert(&mem, tree, "c", "ccc");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting to path [c/a/b] and printing out...\n");
+   path_tree_insert(&mem, tree, "c/a/b", "KEKW");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting three nodes:\n");
+   printf("           [one/kek],\n");
+   printf("           [this/is/a/diversion],\n");
+   printf("           [one/two/three], and printing that out...\n");
+   printf("[STATUS] node 'one/kek' will be equal to 'w' and node one/two/three to 3...\n"); // '.../diversion' to 'bgg'
+   printf("[NOTE] Each will be printed with separate print calls...\n");
+
+   printf("\n[STATUS] Inserting [one/kek] and printing out...\n");
+   path_tree_insert(&mem, tree, "one/kek", "w");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting [one/kek/safe] and printing out...\n");
+   path_tree_insert(&mem, tree, "one/kek/safe", "safe");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting [this/is/a/diversion] and printing out...\n");
+   path_tree_insert(&mem, tree, "this/is/a/diversion", "bgg");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting [one/two/three] and printing out...\n");
+   path_tree_insert(&mem, tree, "one/two/three", "3");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Trying to insert a value of [2!!] into an existing node [one/two]...\n");
+   path_tree_insert(&mem, tree, "one/two", "2!!");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Inserting a completely unrelated node [I/am/a/bit/impressed!]...\n");
+   path_tree_insert(&mem, tree, "I/am/a/bit/impressed!", "No I am not lol");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Inserting a related node [one/two/super/cool/big piece of shit!] now...\n");
+   path_tree_insert(&mem, tree, "one/two/super/cool/big piece of shit!", "shit");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Inserting a diversion node [Hekek/a/pretty/long/path/that/doesn\'t do/shit] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/shit", "AHHHAHA11!!");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Inserting a gigantic path node [Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", "No I\'m lying lol");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Trying to re-insert [Hekek/a/pretty/long/path/that/doesn\'t do/shit] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/shit", "NEW VAL11!");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Trying to insert a value of [WOOW] into an existing node [Hekek/a/pretty]...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty", "WOOW");
+   path_tree_print(tree);
+   printf("\n");
+
+   memory_usage_status(&mem);
+   printf("main_inserts_into_path_tree_and_prints_it: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+struct PathTree* creates_tree_and_inserts_two_nodes(Memory* mem)
+{
+   printf("\ncreates_tree_and_inserts_two_nodes:\n");
+
+   printf("\n[STATUS] Creating a new tree and inserting [the/first/path] = [1st]...\n");
+   struct PathTree* tree = path_tree_create(mem);
+   path_tree_insert(mem, tree, "the/first/path", "1st");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting a cheeky node [the/cheeky/path] = [cheekst]...\n");
+   path_tree_insert(mem, tree, "the/cheeky/path", "cheekst");
+   path_tree_print(tree);
+
+   return tree;
+}
+
+int main_tests_path_tree_insertion_and_going_out_of_context()
+{
+   printf("\nmain_tests_path_tree_insertion_and_going_out_of_context:\n");
+   Memory mem = memory_create(1 * KB);
+
+   printf("[STATUS] Calling a separate function to create a tree for me...\n");
+   struct PathTree* tree = creates_tree_and_inserts_two_nodes(&mem);
+
+   printf("\n[STATUS] main is printing out a tree it got from the function...\n");
+   path_tree_print(tree);
+
+   printf("main_tests_path_tree_insertion_and_going_out_of_context: OK\n");
+   memory_usage_status(&mem);
+   free(mem.pointer);
+   return 0;
+}
+
+int main_tests_inserting_empty_values()
+{
+   printf("\nmain_tests_inserting_empty_values:\n");
+   Memory mem = memory_create(10 * KB);
+
+   printf("[STATUS] Inserting three nodes:\n");
+   printf("         [the/mighty/kek/of/keks],\n");
+   printf("         [the/mighty/artist/of/death],\n");
+   printf("         [the/impossible/riddle].\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_insert(&mem, tree, "the/mighty/kek/of/keks", "KEKW");
+   path_tree_insert(&mem, tree, "the/mighty/artist/of/death", "Boo!!");
+   path_tree_insert(&mem, tree, "the/impossible/riddle", "hmm...");
+   printf("[STATUS] Now printing the tree out...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Now updating value of [the/mighty] with NULL...\n");
+   path_tree_insert(&mem, tree, "the/mighty", NULL);
+   printf("[STATUS] Nothing should change...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Now updating value of [the/mighty] with \"\"...\n");
+   path_tree_insert(&mem, tree, "the/mighty", "");
+   printf("[STATUS] Should not show [EMPTY] near [the/mighty] now...\n");
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("main_tests_inserting_empty_values: OK\n\n");
+   return 0;
+}
+
+int main_tests_trying_to_insert_into_incorrect_paths()
+{
+   printf("\nmain_tests_corner_cases_of_tree_insertion_and_printing:\n");
+   Memory mem = memory_create(10 * KB);
+   int return_code = -2;
+
+   printf("[STATUS] Inserting three nodes:\n");
+   printf("         [the/mighty/kek/of/keks],\n");
+   printf("         [the/mighty/artist/of/death],\n");
+   printf("         [the/impossible/riddle].\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of/keks", "KEKW");
+   printf("[STATUS] Return code after first insert = %d\n", return_code);
+   return_code = path_tree_insert(&mem, tree, "the/mighty/artist/of/death", "Boo!!");
+   printf("[STATUS] Return code after second insert = %d\n", return_code);
+   return_code = path_tree_insert(&mem, tree, "the/impossible/riddle", "hmm...");
+   printf("[STATUS] Return code after third insert = %d\n", return_code);
+   printf("[STATUS] Now printing the tree out...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [/the/mighty]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "/the/mighty", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty/]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [//the/mighty]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "//the/mighty", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty///]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty///", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty/kek/of//keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of//keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the//mighty//kek//of//keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the//mighty//kek//of//keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the//mighty/kek/of/keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the//mighty/kek/of/keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert into empty path...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Finally inserting a proper node [the/mighty/kek/of/POGGERS]...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of/POGGERS", ":-O");
+   assert(return_code == 0);
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("main_tests_corner_cases_of_tree_insertion_and_printing: OK\n\n");
    return 0;
 }

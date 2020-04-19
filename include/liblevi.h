@@ -3,6 +3,8 @@
 
 #include "memory.h"
 #include "list.h"
+#include "path_tree.h"
+#include "util.h"
 
 extern int add(int a, int b);
 
