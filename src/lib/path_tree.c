@@ -27,7 +27,7 @@ int path_tree_is_root_node(struct PathTree* node)
 {
    assert(node);
 
-   return (!strcmp(node->node_name, ROOT_NAME));
+   return (!strcmp(node->node_name, ROOT_NAME) && !node->node_value);
 }
 
 static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* path, char* value)
@@ -201,18 +201,11 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
    free(throwaway_memory.pointer);
 }
 
-// TODO: remove copy buffer from the code
 struct PrintTreeInternal
 {
    Memory* throwaway_memory;
    char* current_path_prefix;
-   char* copy_buffer;
 };
-
-static int path_tree_are_internal_print_bufs_null(struct PrintTreeInternal* bufs)
-{
-   return !bufs->copy_buffer && !bufs->current_path_prefix;
-}
 
 static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers);
 
@@ -247,18 +240,14 @@ static void path_tree_print_element(struct List* element, void* data)
 static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers)
 {
    if(tree->children &&
-      path_tree_are_internal_print_bufs_null(buffers))
+      !buffers->current_path_prefix)
    {
       buffers->current_path_prefix = memory_allocate(
                                        buffers->throwaway_memory,
-                                       (THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1)
+                                       (THROWAWAY_MEMORY_SIZE_FOR_PRINT)
                                      );
-      buffers->copy_buffer = memory_allocate(
-                               buffers->throwaway_memory,
-                               (THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1)
-                             );
-      memset(buffers->copy_buffer, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1);
-      memset(buffers->current_path_prefix, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT / 2 - 1);
+
+      memset(buffers->current_path_prefix, 0, THROWAWAY_MEMORY_SIZE_FOR_PRINT);
    }
 
    if(tree->children)
@@ -278,8 +267,7 @@ void path_tree_print(struct PathTree* tree)
    Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
    struct PrintTreeInternal throwaway_buffers = {
       .throwaway_memory = &throwaway_memory,
-      .current_path_prefix = NULL,
-      .copy_buffer = NULL
+      .current_path_prefix = NULL
    };
    path_tree_print_internal(tree, &throwaway_buffers);
 
