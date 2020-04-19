@@ -164,7 +164,7 @@ static int path_tree_is_path_malformed(const char* path)
    assert(path);
    size_t path_len = strlen(path);
 
-   if(path[0] == '/' || path[path_len - 1] == '/')
+   if(path[0] == '/' || path[path_len - 1] == '/' || util_string_is_null_or_empty(path))
       return TRUE;
 
    int successive_separators = 0;

@@ -959,6 +959,14 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    path_tree_print(tree);
    printf("\n");
 
+   printf("\n[STATUS] Inserting to path [c] and printing out...\n");
+   path_tree_insert(&mem, tree, "c", "ccc");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Inserting to path [c/a/b] and printing out...\n");
+   path_tree_insert(&mem, tree, "c/a/b", "KEKW");
+   path_tree_print(tree);
+
    printf("\n[STATUS] Inserting three nodes:\n");
    printf("           [one/kek],\n");
    printf("           [this/is/a/diversion],\n");
@@ -1147,6 +1155,12 @@ int main_tests_trying_to_insert_into_incorrect_paths()
    printf("\n[STATUS] Trying to insert [the//mighty/kek/of/keks]...\n");
    printf("[STATUS] Nothing should change...\n");
    return_code = path_tree_insert(&mem, tree, "the//mighty/kek/of/keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert into empty path...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "", "???");
    assert(return_code == -1);
    path_tree_print(tree);
 
