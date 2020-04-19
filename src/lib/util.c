@@ -95,31 +95,22 @@ int util_check_unbuilds_to_equal_nonempty(char* path_to_check, char* equals_to)
    return unbuilds_to_equal;
 }
 
-char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
+char* util_chop_current_name_off_path_noalloc(char** path_ptr)
 {
-   assert(memory);
    assert(path_ptr);
-   char* path = *path_ptr;
-   assert(path);
+   assert(*path_ptr);
+   char* original_path = *path_ptr;
 
-   if(util_string_is_null_or_empty(path))
-      return path;
-
-   int index = 0;
-   for(index; index < strlen(path); index++)
+   char* first_separator = strchr(original_path, '/');
+   if(!first_separator)
    {
-      if(path[index] == '/')
-      {
-         char* chopped_off = memory_allocate(memory, index + 2);
-         strncpy(chopped_off, path, index);
-         chopped_off[index] = '\0';
-         *path_ptr = path + index + 1;
-         return chopped_off;
-      }
+      *path_ptr += strlen(*path_ptr);
+      return original_path;
    }
-
-   *path_ptr = path + index;
-   return path;
+   *first_separator = '\0';
+   *path_ptr = first_separator + 1;
+   
+   return original_path;
 }
 
 char* util_chop_off_last_name_from_path_noalloc(char* path)

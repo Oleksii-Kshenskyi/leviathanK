@@ -42,8 +42,8 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
       return;
    }
 
-   char* new_node_name = util_chop_current_name_off_path(
-      memory, &path
+   char* new_node_name = util_chop_current_name_off_path_noalloc(
+      &path
    );
    struct PathTree* new_node = memory_allocate(
       memory, sizeof(struct PathTree)
@@ -98,7 +98,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
    if(util_string_is_null_or_empty(buffers->path))
       return NULL;
 
-   char* looking_for_this = util_chop_current_name_off_path(buffers->throwaway_memory, &buffers->path);
+   char* looking_for_this = util_chop_current_name_off_path_noalloc(&buffers->path);
    util_build_path_prefix_noalloc(&buffers->scanned_path, looking_for_this);
 
    struct List* node_on_correct_path = 
@@ -169,7 +169,7 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
 
    if(!tree->children)
    {
-      path_tree_create_path(memory, tree, path, value);
+      path_tree_create_path(memory, tree, original_path, value);
       return;
    }
 
@@ -190,7 +190,7 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
                         );
    if(!creation_point)
    {
-      char* new_node_name = util_chop_current_name_off_path(memory, &original_path);
+      char* new_node_name = util_chop_current_name_off_path_noalloc(&original_path);
       path_tree_create_new_branch_on_this_node(memory, tree, new_node_name);
 
       path_tree_create_path(memory, tree->children->tail->value, original_path, value);
