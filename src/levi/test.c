@@ -1056,3 +1056,106 @@ int main_tests_path_tree_insertion_and_going_out_of_context()
    free(mem.pointer);
    return 0;
 }
+
+int main_tests_inserting_empty_values()
+{
+   printf("\nmain_tests_inserting_empty_values:\n");
+   Memory mem = memory_create(10 * KB);
+
+   printf("[STATUS] Inserting three nodes:\n");
+   printf("         [the/mighty/kek/of/keks],\n");
+   printf("         [the/mighty/artist/of/death],\n");
+   printf("         [the/impossible/riddle].\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_insert(&mem, tree, "the/mighty/kek/of/keks", "KEKW");
+   path_tree_insert(&mem, tree, "the/mighty/artist/of/death", "Boo!!");
+   path_tree_insert(&mem, tree, "the/impossible/riddle", "hmm...");
+   printf("[STATUS] Now printing the tree out...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Now updating value of [the/mighty] with NULL...\n");
+   path_tree_insert(&mem, tree, "the/mighty", NULL);
+   printf("[STATUS] Nothing should change...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Now updating value of [the/mighty] with \"\"...\n");
+   path_tree_insert(&mem, tree, "the/mighty", "");
+   printf("[STATUS] Should not show [EMPTY] near [the/mighty] now...\n");
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("main_tests_inserting_empty_values: OK\n\n");
+   return 0;
+}
+
+int main_tests_trying_to_insert_into_incorrect_paths()
+{
+   printf("\nmain_tests_corner_cases_of_tree_insertion_and_printing:\n");
+   Memory mem = memory_create(10 * KB);
+   int return_code = -2;
+
+   printf("[STATUS] Inserting three nodes:\n");
+   printf("         [the/mighty/kek/of/keks],\n");
+   printf("         [the/mighty/artist/of/death],\n");
+   printf("         [the/impossible/riddle].\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of/keks", "KEKW");
+   printf("[STATUS] Return code after first insert = %d\n", return_code);
+   return_code = path_tree_insert(&mem, tree, "the/mighty/artist/of/death", "Boo!!");
+   printf("[STATUS] Return code after second insert = %d\n", return_code);
+   return_code = path_tree_insert(&mem, tree, "the/impossible/riddle", "hmm...");
+   printf("[STATUS] Return code after third insert = %d\n", return_code);
+   printf("[STATUS] Now printing the tree out...\n");
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [/the/mighty]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "/the/mighty", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty/]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [//the/mighty]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "//the/mighty", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty///]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty///", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the/mighty/kek/of//keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of//keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the//mighty//kek//of//keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the//mighty//kek//of//keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to insert [the//mighty/kek/of/keks]...\n");
+   printf("[STATUS] Nothing should change...\n");
+   return_code = path_tree_insert(&mem, tree, "the//mighty/kek/of/keks", "???");
+   assert(return_code == -1);
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Finally inserting a proper node [the/mighty/kek/of/POGGERS]...\n");
+   return_code = path_tree_insert(&mem, tree, "the/mighty/kek/of/POGGERS", ":-O");
+   assert(return_code == 0);
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("main_tests_corner_cases_of_tree_insertion_and_printing: OK\n\n");
+   return 0;
+}

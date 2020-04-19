@@ -159,18 +159,41 @@ static void path_tree_create_new_branch_on_this_node(
    list_insert_tail(memory, tree_to_insert_into->children, new_node);
 }
 
-void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value)
+static int path_tree_is_path_malformed(const char* path)
+{
+   assert(path);
+   size_t path_len = strlen(path);
+
+   if(path[0] == '/' || path[path_len - 1] == '/')
+      return TRUE;
+
+   int successive_separators = 0;
+   for(int index = 0; index < path_len; index++)
+   {
+      successive_separators = (path[index] == '/') ? successive_separators + 1 : 0;
+      if(successive_separators > 1)
+         return TRUE;
+   }
+
+   return FALSE;
+}
+
+int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value)
 {
    assert(memory);
    assert(path);
    assert(tree);
+
+   if(path_tree_is_path_malformed(path))
+      return -1;
+
    char* original_path = memory_allocate(memory, strlen(path) + 1);
    strcpy(original_path, path);
 
    if(!tree->children)
    {
       path_tree_create_path(memory, tree, original_path, value);
-      return;
+      return 0;
    }
 
    Memory throwaway_memory = memory_create(strlen(path) * 5);
@@ -199,6 +222,7 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_create_path(memory, creation_point, buffers.path, value);
 
    free(throwaway_memory.pointer);
+   return 0;
 }
 
 struct PrintTreeInternal
@@ -224,12 +248,12 @@ static void path_tree_print_element(struct List* element, void* data)
    util_build_path_prefix_noalloc(&buffers->current_path_prefix, 
                                   tree_element->node_name);
    if(tree_element->node_value)
-      printf("%s: %s [%p]\n", 
+      printf("%s: %s\n"/* [%p]*/, 
              buffers->current_path_prefix, 
-             tree_element->node_value,
-             tree_element);
+             tree_element->node_value/*,
+             tree_element*/);
    else
-      printf("%s: [EMPTY] [%p]\n", buffers->current_path_prefix, tree_element);
+      printf("%s: [EMPTY]\n"/* [%p]*/, buffers->current_path_prefix/*, tree_element*/);
 
    if(tree_element->children)
       path_tree_print_internal(tree_element, buffers);
