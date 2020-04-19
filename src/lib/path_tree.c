@@ -46,7 +46,7 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
       memory, sizeof(struct PathTree)
    );
 
-   new_node->node_name = new_node_name;
+   new_node->node_name = util_string_create(memory, new_node_name, 0);
 
    if(!util_string_is_null_or_empty(path))
       new_node->node_value = NULL;
@@ -74,35 +74,66 @@ static int path_tree_insertion_foreach_callback(struct List* child, void* path_e
    return (!strcmp(tree_element->node_name, (char*)path_equal_to_this));
 }
 
+struct CreationPointInternal
+{
+   Memory* throwaway_memory;
+   char* creation_point;
+   char* path;
+   char* scanned_path;
+};
+
 static struct PathTree* path_tree_find_starting_point_for_path_creation(
             Memory* application_memory,
-            Memory* throwaway_memory,
-            struct PathTree* tree,
-            char** path_ptr)
+            struct CreationPointInternal* buffers,
+            struct PathTree* tree)
 {
    assert(application_memory);
+   assert(buffers);
    assert(tree);
-   assert(path_ptr);
-   assert(*path_ptr);
+   assert(buffers->path);
 
-   if(util_string_is_null_or_empty(*path_ptr))
+   if(util_string_is_null_or_empty(buffers->path))
       return NULL;
 
-   char* looking_for_this = util_chop_current_name_off_path(throwaway_memory, path_ptr);
+   char* looking_for_this = util_chop_current_name_off_path(buffers->throwaway_memory, &buffers->path);
+   util_build_path_prefix_noalloc(&buffers->scanned_path, looking_for_this);
+
    struct List* node_on_correct_path = 
                list_find_first_if(tree->children,
                                   path_tree_insertion_foreach_callback,
                                   looking_for_this);
 
+   if(!buffers->creation_point)
+   {
+      buffers->creation_point = util_string_create(buffers->throwaway_memory, "", 0.2 * buffers->throwaway_memory->capacity);
+      strcpy(buffers->creation_point, "");
+   }
+
+   if(node_on_correct_path)
+      util_build_path_prefix_noalloc(&buffers->creation_point, ((struct PathTree*)node_on_correct_path->value)->node_name);
+   else if(!util_string_is_null_or_empty(buffers->creation_point) && util_check_unbuilds_to_equal_nonempty(buffers->scanned_path, buffers->creation_point))
+   {
+      strcpy(buffers->creation_point, buffers->scanned_path);
+      char* last_name_on_scanned_path = util_chop_off_last_name_from_path_noalloc(buffers->scanned_path);
+      buffers->path = util_build_path_prefix(buffers->throwaway_memory, last_name_on_scanned_path, buffers->path);
+      return tree;
+   }
+
+   if(!node_on_correct_path && 
+      !util_string_is_null_or_empty(buffers->creation_point) && 
+      util_check_unbuilds_to_equal_nonempty(buffers->scanned_path, buffers->creation_point))
+   {
+      return tree;
+   }
+
    if((node_on_correct_path && !((struct PathTree*)node_on_correct_path->value)->children) ||
-       node_on_correct_path && !strcmp(*path_ptr, ""))
+       node_on_correct_path && !strcmp(buffers->path, ""))
       return (struct PathTree*) node_on_correct_path->value;
 
    return (node_on_correct_path) ? 
             path_tree_find_starting_point_for_path_creation(
-               application_memory, throwaway_memory, 
-               (struct PathTree*)node_on_correct_path->value, 
-               path_ptr
+               application_memory, buffers, 
+               (struct PathTree*)node_on_correct_path->value
             ) :
             NULL;
 }
@@ -112,7 +143,8 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
    assert(memory);
    assert(path);
    assert(tree);
-   char* original_path = path;
+   char* original_path = memory_allocate(memory, strlen(path) + 1);
+   strcpy(original_path, path);
 
    if(!tree->children)
    {
@@ -120,14 +152,23 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       return;
    }
 
-   Memory throwaway_memory = memory_create(strlen(path) * 3);
+   Memory throwaway_memory = memory_create(strlen(path) * 5);
+   struct CreationPointInternal buffers = {
+      .throwaway_memory = &throwaway_memory,
+      .creation_point = NULL,
+      .path = NULL,
+      .scanned_path = NULL
+   };
+   buffers.path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   buffers.scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   strcpy(buffers.path, path);
+   strcpy(buffers.scanned_path, "");
    struct PathTree* creation_point = 
                         path_tree_find_starting_point_for_path_creation(
-                              memory, &throwaway_memory, tree, &path
+                              memory, &buffers, tree
                         );
    if(!creation_point)
    {
-      printf("[DEBUG] Creation point does not exist...\n");
       // TODO: extract this into a separate function
       // call it something like "path_tree_create_new_branch_on_this_node()"
       struct PathTree* new_node = path_tree_create(memory);
@@ -140,14 +181,12 @@ void path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* v
       path_tree_create_path(memory, tree->children->tail->value, original_path, value);
    }
    else
-   {
-      printf("[DEBUG] Creation point exists and reported as [%p]...\n", creation_point);
-      path_tree_create_path(memory, creation_point, path, value);
-   }
+      path_tree_create_path(memory, creation_point, buffers.path, value);
 
    free(throwaway_memory.pointer);
 }
 
+// TODO: remove copy buffer from the code
 struct PrintTreeInternal
 {
    Memory* throwaway_memory;

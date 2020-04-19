@@ -827,6 +827,41 @@ int main_unbuilds_path_prefix()
    free(mem.pointer);
 }
 
+int main_checks_unbuilds_to_equal()
+{
+   printf("\nmain_checks_unbuild_to_equal:\n");
+   Memory mem = memory_create(0.5 * KB);
+
+   printf("[STATUS] Checking if [please/do/this/properly] unbuilds to [please/do/this]...\n");
+   char* path = util_string_create(&mem, "please/do/this/properly", 64);
+   char* check_equal_to = util_string_create(&mem, "please/do/this", 64);
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [please] unbuilds to []...\n");
+   strcpy(path, "so");
+   strcpy(check_equal_to, "");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [] unbuilds to []...\n");
+   strcpy(path, "");
+   strcpy(check_equal_to, "");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [s/t] unbuilds to [s]...\n");
+   strcpy(path, "s/t");
+   strcpy(check_equal_to, "s");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   printf("[STATUS] Checking if [!@#$#$$!@#*&*&(&/@@@] unbuilds to [!@#$#$$!@#*&*&(&]...\n");
+   strcpy(path, "!@#$#$$!@#*&*&(&/@@@");
+   strcpy(check_equal_to, "!@#$#$$!@#*&*&(&");
+   printf("         Answer is -> %s", (util_check_unbuilds_to_equal_nonempty(path, check_equal_to)) ? "yes!\n" : "no!\n");
+
+   memory_usage_status(&mem);
+   printf("main_checks_unbuild_to_equal: OK\n");
+   free(mem.pointer);
+}
+
 void chop_off_single_pass(Memory* mem, char** full_path, 
                       char* chopped_off_expected, char* full_path_expected)
 {
@@ -922,9 +957,22 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    path_tree_print(tree);
    printf("\n");
 
-   printf("\n[STATUS] Inserting two nodes, [one] and [one/two/three] and printing that out...\n");
-   printf("[STATUS] node 'one' will be equal to 1 and node one/two/three to 3...\n");
-   path_tree_insert(&mem, tree, "one", "1");
+   printf("\n[STATUS] Inserting three nodes:\n");
+   printf("           [one/kek],\n");
+   printf("           [this/is/a/diversion],\n");
+   printf("           [one/two/three], and printing that out...\n");
+   printf("[STATUS] node 'one/kek' will be equal to 'w' and node one/two/three to 3...\n"); // '.../diversion' to 'bgg'
+   printf("[NOTE] Each will be printed with separate print calls...\n");
+   printf("\n[STATUS] Inserting [one/kek] and printing out...\n");
+   path_tree_insert(&mem, tree, "one/kek", "w");
+   path_tree_print(tree);
+   printf("\n[STATUS] Inserting [one/kek/safe] and printing out...\n");
+   path_tree_insert(&mem, tree, "one/kek/safe", "safe");
+   path_tree_print(tree);
+   printf("\n[STATUS] Inserting [this/is/a/diversion] and printing out...\n");
+   path_tree_insert(&mem, tree, "this/is/a/diversion", "bgg");
+   path_tree_print(tree);
+   printf("\n[STATUS] Inserting [one/two/three] and printing out...\n");
    path_tree_insert(&mem, tree, "one/two/three", "3");
    path_tree_print(tree);
    printf("\n");
@@ -939,8 +987,18 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    path_tree_print(tree);
    printf("\n");
 
+   printf("\n[STATUS] Inserting a diversion node [Hekek/a/pretty/long/path/that/doesn\'t do/shit] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/shit", "AHHHAHA11!!");
+   path_tree_print(tree);
+   printf("\n");
+
    printf("\n[STATUS] Inserting a gigantic path node [Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!] now...\n");
    path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", "No I\'m lying lol");
+   path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Trying to re-insert [Hekek/a/pretty/long/path/that/doesn\'t do/shit] now...\n");
+   path_tree_insert(&mem, tree, "Hekek/a/pretty/long/path/that/doesn\'t do/shit", "NEW VAL11!");
    path_tree_print(tree);
    printf("\n");
 

@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-int util_string_is_null_or_empty(char* cstr)
+int util_string_is_null_or_empty(const char* cstr)
 {
    return !cstr || !strcmp(cstr, "");
 }
@@ -74,6 +74,27 @@ void util_unbuild_path_prefix_once(char* path)
       *path = '\0';
 }
 
+int util_check_unbuilds_to_equal_nonempty(char* path_to_check, char* equals_to)
+{
+   assert(path_to_check);
+   assert(equals_to);
+
+   if(util_string_is_null_or_empty(equals_to))
+      return 0;
+
+   char null_char = '\0';
+
+   char* last_separator = strrchr(path_to_check, '/');
+   if(!last_separator)
+      return 0;
+
+   *last_separator = '\0';
+   int unbuilds_to_equal = !strcmp(path_to_check, equals_to);
+   *last_separator = '/';
+
+   return unbuilds_to_equal;
+}
+
 char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
 {
    assert(memory);
@@ -99,4 +120,12 @@ char* util_chop_current_name_off_path(Memory* memory, char** path_ptr)
 
    *path_ptr = path + index;
    return path;
+}
+
+char* util_chop_off_last_name_from_path_noalloc(char* path)
+{
+   assert(path);
+
+   char* last_separator = strrchr(path, '/');
+   return (last_separator) ? last_separator + 1 : path;
 }
