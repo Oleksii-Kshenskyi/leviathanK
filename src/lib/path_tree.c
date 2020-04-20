@@ -291,7 +291,8 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
 
    if(path_tree_is_empty(tree))
    {
-      printf("%s: [EMPTY]\n", tree->node_name);
+      if(verbosity == PRINT_VERBOSE)
+         printf("%s: [EMPTY]\n", tree->node_name);
       return;
    }
 
