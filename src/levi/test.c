@@ -956,8 +956,7 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
 
    printf("\n[STATUS] Printing an empty newly created tree...\n");
    struct PathTree* tree = path_tree_create(&mem);
-   path_tree_print(tree);
-   printf("\n");
+   path_tree_print_verbose(tree);
 
    printf("\n[STATUS] Inserting to path [c] and printing out...\n");
    path_tree_insert(&mem, tree, "c", "ccc");
@@ -1024,6 +1023,10 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    printf("\n[STATUS] Trying to insert a value of [WOOW] into an existing node [Hekek/a/pretty]...\n");
    path_tree_insert(&mem, tree, "Hekek/a/pretty", "WOOW");
    path_tree_print(tree);
+   printf("\n");
+
+   printf("\n[STATUS] Now trying to print verbosely and see what changes...\n");
+   path_tree_print_verbose(tree);
    printf("\n");
 
    memory_usage_status(&mem);
@@ -1171,5 +1174,67 @@ int main_tests_trying_to_insert_into_incorrect_paths()
 
    memory_usage_status(&mem);
    printf("main_tests_corner_cases_of_tree_insertion_and_printing: OK\n\n");
+   return 0;
+}
+
+int main_small_print_verbose_test()
+{
+   printf("main_small_print_verbose_test:\n");
+   Memory mem = memory_create(1 * KB);
+
+   printf("\n[STATUS] Creating a tree and inserting 4 small nodes:\n");
+   printf("[a/smol/lil/node], [a/big/lil/node], [a/smol/cool/pp], [a/big/lil/ahaha kek]...\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_insert(&mem, tree, "a/smol/lil/node", "ln");
+   path_tree_insert(&mem, tree, "a/big/lil/node", "bn");
+   path_tree_insert(&mem, tree, "a/smol/cool/pp", "pp");
+   path_tree_insert(&mem, tree, "a/big/lil/ahaha kek", "ak");
+
+   printf("\n[STATUS] Now printing it verbosely...\n");
+   path_tree_print_verbose(tree);
+
+   printf("\n[STATUS] Now changing [a/big/lil/ahaha kek]'s value to [KEKW]...\n");
+   path_tree_insert(&mem, tree, "a/big/lil/ahaha kek", "KEKW");
+
+   printf("\n[STATUS] Now printing it non-verbosely...\n");
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("\nmain_small_print_verbose_test: OK\n");
+   free(mem.pointer);
+   return 0;
+
+}
+
+int main_checks_nonverbose_printing_of_empty_trees()
+{
+   printf("main_checks_nonverbose_printing_of_empty_trees:\n");
+   Memory mem = memory_create(1 * KB);
+
+   printf("\n[STATUS] Creating an empty tree and printing\n");
+   printf("         with both verbose and non-verbose prints...\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   printf("[STATUS] Now printing with a non-verbose print...\n");
+   path_tree_print(tree);
+   printf("[STATUS] Now printing with a verbose print...\n");
+   path_tree_print_verbose(tree);
+
+   printf("\n[STATUS] inserting 4 small nodes:\n");
+   printf("[a/smol/lil/node], [a/big/lil/node], [a/smol/cool/pp], [a/big/lil/ahaha kek]...\n");
+   printf("[STATUS] All those nodes have a NULL value...\n");
+   path_tree_insert(&mem, tree, "a/smol/lil/node", NULL);
+   path_tree_insert(&mem, tree, "a/big/lil/node", NULL);
+   path_tree_insert(&mem, tree, "a/smol/cool/pp", NULL);
+   path_tree_insert(&mem, tree, "a/big/lil/ahaha kek", NULL);
+
+   printf("\n[STATUS] Now printing it verbosely...\n");
+   path_tree_print_verbose(tree);
+
+   printf("\n[STATUS] Now printing it non-verbosely...\n");
+   path_tree_print(tree);
+
+   memory_usage_status(&mem);
+   printf("\nmain_checks_nonverbose_printing_of_empty_trees: OK\n");
+   free(mem.pointer);
    return 0;
 }
