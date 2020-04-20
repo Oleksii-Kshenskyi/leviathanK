@@ -229,6 +229,7 @@ struct PrintTreeInternal
 {
    Memory* throwaway_memory;
    char* current_path_prefix;
+   int verbosity_level;
 };
 
 static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInternal* buffers);
@@ -248,12 +249,18 @@ static void path_tree_print_element(struct List* element, void* data)
    util_build_path_prefix_noalloc(&buffers->current_path_prefix, 
                                   tree_element->node_name);
    if(tree_element->node_value)
-      printf("%s: %s\n"/* [%p]*/, 
-             buffers->current_path_prefix, 
-             tree_element->node_value/*,
-             tree_element*/);
+      if(buffers->verbosity_level == PRINT_VERBOSE)
+         printf("%s: %s [%p]\n", 
+                buffers->current_path_prefix, 
+                tree_element->node_value,
+                tree_element);
+      else
+         printf("%s: %s\n", 
+                buffers->current_path_prefix, 
+                tree_element->node_value);
    else
-      printf("%s: [EMPTY]\n"/* [%p]*/, buffers->current_path_prefix/*, tree_element*/);
+      if(buffers->verbosity_level == PRINT_VERBOSE)
+         printf("%s: [EMPTY] [%p]\n", buffers->current_path_prefix, tree_element);
 
    if(tree_element->children)
       path_tree_print_internal(tree_element, buffers);
@@ -278,7 +285,7 @@ static void path_tree_print_internal(struct PathTree* tree, struct PrintTreeInte
       list_for_each(tree->children, path_tree_print_element, buffers);
 }
 
-void path_tree_print(struct PathTree* tree)
+void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
 {
    assert(tree);
 
@@ -291,7 +298,8 @@ void path_tree_print(struct PathTree* tree)
    Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
    struct PrintTreeInternal throwaway_buffers = {
       .throwaway_memory = &throwaway_memory,
-      .current_path_prefix = NULL
+      .current_path_prefix = NULL,
+      .verbosity_level = verbosity
    };
    path_tree_print_internal(tree, &throwaway_buffers);
 
