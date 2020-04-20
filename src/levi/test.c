@@ -957,7 +957,6 @@ int main/*_inserts_into_path_tree_and_prints_it*/()
    printf("\n[STATUS] Printing an empty newly created tree...\n");
    struct PathTree* tree = path_tree_create(&mem);
    path_tree_print_verbose(tree);
-   printf("\n");
 
    printf("\n[STATUS] Inserting to path [c] and printing out...\n");
    path_tree_insert(&mem, tree, "c", "ccc");

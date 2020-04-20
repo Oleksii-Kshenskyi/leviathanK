@@ -289,12 +289,10 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
 {
    assert(tree);
 
+   if(verbosity == PRINT_VERBOSE)
+      printf("%s: [EMPTY] [%p]\n", tree->node_name, tree);
    if(path_tree_is_empty(tree))
-   {
-      if(verbosity == PRINT_VERBOSE)
-         printf("%s: [EMPTY] [%p]\n", tree->node_name, tree);
       return;
-   }
 
    Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
    struct PrintTreeInternal throwaway_buffers = {
