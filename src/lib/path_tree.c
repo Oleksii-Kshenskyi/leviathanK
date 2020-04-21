@@ -86,11 +86,9 @@ struct CreationPointInternal
 };
 
 static struct PathTree* path_tree_find_starting_point_for_path_creation(
-            Memory* application_memory,
             struct CreationPointInternal* buffers,
             struct PathTree* tree)
 {
-   assert(application_memory);
    assert(buffers);
    assert(tree);
    assert(buffers->path);
@@ -135,7 +133,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
 
    return (node_on_correct_path) ? 
             path_tree_find_starting_point_for_path_creation(
-               application_memory, buffers, 
+               buffers, 
                (struct PathTree*)node_on_correct_path->value
             ) :
             NULL;
@@ -209,7 +207,7 @@ int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* va
    strcpy(buffers.scanned_path, "");
    struct PathTree* creation_point = 
                         path_tree_find_starting_point_for_path_creation(
-                              memory, &buffers, tree
+                              &buffers, tree
                         );
    if(!creation_point)
    {
@@ -312,7 +310,6 @@ extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char*
    if(path_tree_is_path_malformed(path))
       return NULL;
 
-
    Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
    char* buf_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
    char* buf_scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
@@ -324,8 +321,7 @@ extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char*
       .path = buf_path,
       .scanned_path = buf_scanned_path
    };
-   struct PathTree* found = path_tree_find_starting_point_for_path_creation(&throwaway_memory, &buffers, tree);
-   memory_usage_status(&throwaway_memory);
+   struct PathTree* found = path_tree_find_starting_point_for_path_creation(&buffers, tree);
    free(throwaway_memory.pointer);
 
    return found;
