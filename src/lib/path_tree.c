@@ -306,8 +306,9 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
 extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
 {
    assert(path);
+   assert(tree);
 
-   if(path_tree_is_path_malformed(path))
+   if(path_tree_is_path_malformed(path) || !tree->children)
       return NULL;
 
    Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
