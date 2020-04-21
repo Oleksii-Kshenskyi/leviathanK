@@ -304,3 +304,29 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
 
    free(throwaway_memory.pointer);
 }
+
+extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
+{
+   assert(path);
+
+   if(path_tree_is_path_malformed(path))
+      return NULL;
+
+
+   Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
+   char* buf_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   char* buf_scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   strcpy(buf_path, path);
+   strcpy(buf_scanned_path, "");
+   struct CreationPointInternal buffers = {
+      .throwaway_memory = &throwaway_memory,
+      .creation_point = NULL,
+      .path = buf_path,
+      .scanned_path = buf_scanned_path
+   };
+   struct PathTree* found = path_tree_find_starting_point_for_path_creation(&throwaway_memory, &buffers, tree);
+   memory_usage_status(&throwaway_memory);
+   free(throwaway_memory.pointer);
+
+   return found;
+}
