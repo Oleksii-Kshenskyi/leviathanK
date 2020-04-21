@@ -1259,7 +1259,7 @@ void prints_out_find_status(struct PathTree* tree, char* path, char* expected_na
    }
 }
 
-int main/*_finds_nodes_by_path*/()
+int main_finds_nodes_by_path()
 {
    printf("\nmain_finds_nodes_by_path:\n");
    Memory mem = memory_create(2 * KB);
@@ -1365,6 +1365,61 @@ int main_tries_to_bork_find_node_by_path()
    printf("\n[STATUS] App memory state: ");
    memory_usage_status(&mem);
    printf("\nmain_tries_to_bork_find_node_by_path: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main/*_finds_single_node_and_prints_it*/()
+{
+   printf("\nmain_finds_single_node_and_prints_it:\n");
+   Memory mem = memory_create(2 * KB);
+
+   printf("\n[STATUS] Creating a tree with 8 nodes...\n");
+   struct PathTree* tree = path_tree_create(&mem);
+   path_tree_insert(&mem, tree, "m", "W");
+   path_tree_insert(&mem, tree, "me", "hello!");
+   path_tree_insert(&mem, tree, "me/am/bad", "sry :(");
+   path_tree_insert(&mem, tree, "the/actual/what/am/I/doing/right/now", "*shrugs*");
+   path_tree_insert(&mem, tree, "the/actual/gibberish/is/going/on/right/now", "no clue ^_^");
+   path_tree_insert(&mem, tree, "the/actual/gibberish/mwahaha/very/funny/yes", "I know Kappa");
+   path_tree_insert(&mem, tree, "the/actual", "KEKW");
+   path_tree_insert(&mem, tree, "me/am/sad", NULL);
+
+   path_tree_print(tree);
+
+   printf("\n[STATUS] Trying to find [m]...\n");
+   path_tree_find_and_print_node(tree, "m");
+
+   printf("\n[STATUS] Trying to find [me]...\n");
+   path_tree_find_and_print_node(tree, "me");
+
+   printf("\n[STATUS] Now finding and printing out a middle node [the/actual]...\n");
+   path_tree_find_and_print_node(tree, "the/actual");
+
+   printf("\n[STATUS] Now finding and printing out an endpoint node [me/am/bad]...\n");
+   path_tree_find_and_print_node(tree, "me/am/bad");
+
+   printf("\n[STATUS] Now finding and printing out an empty endpoint node [me/am/sad]...\n");
+   path_tree_find_and_print_node(tree, "me/am/sad");
+
+   printf("\n[STATUS] Trying to find [me/am/bad]...\n");
+   path_tree_find_and_print_node(tree, "me/am/bad");
+
+   printf("\n[STATUS] Trying to find [me/am]...\n");
+   path_tree_find_and_print_node(tree, "me/am");
+
+   printf("\n[STATUS] Trying to find [the/actual/gibberish/mwahaha/very/funny/yes]...\n");
+   path_tree_find_and_print_node(tree, "the/actual/gibberish/mwahaha/very/funny/yes");
+
+   printf("\n[STATUS] Trying to find [the/actual/gibberish/is/going/on/right/now]...\n");
+   path_tree_find_and_print_node(tree, "the/actual/gibberish/is/going/on/right/now");
+
+   printf("\n[STATUS] Trying to find [the/actual/what/am/I/doing/right/now]...\n");
+   path_tree_find_and_print_node(tree, "the/actual/what/am/I/doing/right/now");
+
+   printf("\n[STATUS] App memory state: ");
+   memory_usage_status(&mem);
+   printf("\nmain_finds_single_node_and_prints_it: OK\n");
    free(mem.pointer);
    return 0;
 }

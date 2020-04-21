@@ -318,7 +318,7 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
    free(throwaway_memory.pointer);
 }
 
-extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
+struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
 {
    assert(path);
    assert(tree);
@@ -341,4 +341,36 @@ extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char*
    free(throwaway_memory.pointer);
 
    return found;
+}
+
+void path_tree_find_and_print_node(struct PathTree* node, char* path)
+{
+   assert(node);
+   assert(path);
+
+   if(path_tree_is_path_malformed(path))
+      return;
+
+   Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
+   char* buf_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   char* buf_scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   strcpy(buf_path, path);
+   strcpy(buf_scanned_path, "");
+   struct CreationPointInternal buffers = {
+      .throwaway_memory = &throwaway_memory,
+      .creation_point = NULL,
+      .path = buf_path,
+      .scanned_path = buf_scanned_path
+   };
+   struct PathTree* found = path_tree_find_starting_point_for_path_creation(&buffers, node);
+
+   if(found)
+   {
+      if(found->node_value)
+         printf("%s: %s\n", path, found->node_value);
+      else
+         printf("%s: [EMPTY]\n", path);
+   }
+
+   free(throwaway_memory.pointer);
 }
