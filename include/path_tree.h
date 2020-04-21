@@ -31,4 +31,7 @@ static inline void path_tree_print_verbose(struct PathTree* tree)
    path_tree_print_choose_verbosity(tree, PRINT_VERBOSE);
 }
 
+extern struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path);
+extern void path_tree_find_and_print_node(struct PathTree* node, char* path);
+
 #endif

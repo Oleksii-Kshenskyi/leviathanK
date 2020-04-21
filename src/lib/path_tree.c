@@ -86,16 +86,14 @@ struct CreationPointInternal
 };
 
 static struct PathTree* path_tree_find_starting_point_for_path_creation(
-            Memory* application_memory,
             struct CreationPointInternal* buffers,
             struct PathTree* tree)
 {
-   assert(application_memory);
    assert(buffers);
    assert(tree);
    assert(buffers->path);
 
-   if(util_string_is_null_or_empty(buffers->path))
+   if(util_string_is_null_or_empty(buffers->path) || !tree->children)
       return NULL;
 
    char* looking_for_this = util_chop_current_name_off_path_noalloc(&buffers->path);
@@ -135,7 +133,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
 
    return (node_on_correct_path) ? 
             path_tree_find_starting_point_for_path_creation(
-               application_memory, buffers, 
+               buffers, 
                (struct PathTree*)node_on_correct_path->value
             ) :
             NULL;
@@ -209,7 +207,7 @@ int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* va
    strcpy(buffers.scanned_path, "");
    struct PathTree* creation_point = 
                         path_tree_find_starting_point_for_path_creation(
-                              memory, &buffers, tree
+                              &buffers, tree
                         );
    if(!creation_point)
    {
@@ -290,8 +288,23 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
    assert(tree);
 
    if(verbosity == PRINT_VERBOSE)
-      printf("%s: [EMPTY] [%p]\n", tree->node_name, tree);
-   if(path_tree_is_empty(tree))
+   {
+      printf("%s: ", tree->node_name);
+      if(!tree->node_value)
+         printf("[EMPTY] [%p]\n", tree);
+      else
+         printf("%s [%p]\n", tree->node_value, tree);
+   }
+   else if(verbosity == PRINT_NONVERBOSE &&
+           !path_tree_is_root_node(tree) && 
+           !tree->children)
+   {
+      if(tree->node_value)
+         printf("%s: %s\n", tree->node_name, tree->node_value);
+      else
+         printf("%s: [EMPTY]\n", tree->node_name);
+   }
+   if(!tree->children)
       return;
 
    Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
@@ -303,4 +316,47 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
    path_tree_print_internal(tree, &throwaway_buffers);
 
    free(throwaway_memory.pointer);
+}
+
+struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
+{
+   assert(path);
+   assert(tree);
+
+   if(path_tree_is_path_malformed(path))
+      return NULL;
+
+   Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
+   char* buf_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   char* buf_scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
+   strcpy(buf_path, path);
+   strcpy(buf_scanned_path, "");
+   struct CreationPointInternal buffers = {
+      .throwaway_memory = &throwaway_memory,
+      .creation_point = NULL,
+      .path = buf_path,
+      .scanned_path = buf_scanned_path
+   };
+   struct PathTree* found = path_tree_find_starting_point_for_path_creation(&buffers, tree);
+   free(throwaway_memory.pointer);
+
+   return found;
+}
+
+void path_tree_find_and_print_node(struct PathTree* tree, char* path)
+{
+   assert(tree);
+   assert(path);
+
+   if(path_tree_is_path_malformed(path))
+      return;
+
+   struct PathTree* found = path_tree_find_node_by_path(tree, path);
+   if(found)
+   {
+      if(found->node_value)
+         printf("%s: %s\n", path, found->node_value);
+      else
+         printf("%s: [EMPTY]\n", path);
+   }
 }
