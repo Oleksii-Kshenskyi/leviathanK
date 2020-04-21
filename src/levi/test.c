@@ -1358,7 +1358,7 @@ int main_tries_to_bork_find_node_by_path()
    printf("\n[STATUS] Trying to find [some/random/path] in an empty tree... Found node should be NULL...\n");
    assert(!path_tree_find_node_by_path(empty_tree, "some/random/path"));
 
-   printf("\n[STATUS] Trying to find a short [a] node in a tree where it is the only node... Found node should be NULL...\n");
+   printf("\n[STATUS] Trying to find a short [a] node in a tree where it is the only node...\n");
    path_tree_insert(&mem, empty_tree, "a", "K");
    prints_out_find_status(tree, "a", "a", "K");
 
@@ -1369,7 +1369,7 @@ int main_tries_to_bork_find_node_by_path()
    return 0;
 }
 
-int main/*_finds_single_node_and_prints_it*/()
+int main_finds_single_node_and_prints_it()
 {
    printf("\nmain_finds_single_node_and_prints_it:\n");
    Memory mem = memory_create(2 * KB);
