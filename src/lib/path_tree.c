@@ -288,8 +288,23 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
    assert(tree);
 
    if(verbosity == PRINT_VERBOSE)
-      printf("%s: [EMPTY] [%p]\n", tree->node_name, tree);
-   if(path_tree_is_empty(tree))
+   {
+      printf("%s: ", tree->node_name);
+      if(!tree->node_value)
+         printf("[EMPTY] [%p]\n", tree);
+      else
+         printf("%s [%p]\n", tree->node_value, tree);
+   }
+   else if(verbosity == PRINT_NONVERBOSE &&
+           !path_tree_is_root_node(tree) && 
+           !tree->children)
+   {
+      if(tree->node_value)
+         printf("%s: %s\n", tree->node_name, tree->node_value);
+      else
+         printf("%s: [EMPTY]\n", tree->node_name);
+   }
+   if(!tree->children)
       return;
 
    Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
