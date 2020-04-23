@@ -113,6 +113,59 @@ char* util_chop_current_name_off_path_noalloc(char** path_ptr)
    return original_path;
 }
 
+static char* util_string_split_step_keep_empty(char** string_ptr, char separator)
+{
+   char* original_string = *string_ptr;
+
+   char* next_token = strchr(original_string, separator);
+   if(!next_token)
+   {
+      *string_ptr += strlen(*string_ptr);
+      return original_string;
+   }
+   *next_token = '\0';
+   *string_ptr = next_token + 1;
+   
+   return original_string;
+}
+
+static void util_string_fast_forward_to_next_non_char(char** string_ptr, char char_to_ff)
+{
+   while(**string_ptr == char_to_ff)
+   {
+      **string_ptr = '\0';
+      *string_ptr += 1;
+   }
+}
+
+static char* util_string_split_step_skip_empty(char** string_ptr, char separator)
+{
+   util_string_fast_forward_to_next_non_char(string_ptr, separator);
+
+   char* token_start = *string_ptr;
+   char* next_separator = strchr(token_start, separator);
+   if(!next_separator)
+   {
+      *string_ptr += strlen(*string_ptr);
+      return token_start;
+   }
+   *string_ptr = next_separator;
+   util_string_fast_forward_to_next_non_char(string_ptr, separator);
+   return token_start;
+}
+
+char* util_string_split_step(char** string_ptr, char separator, int skip_empty)
+{
+   assert(string_ptr);
+   assert(*string_ptr);
+   assert(skip_empty == 0 || skip_empty == 1);
+
+   if(skip_empty == SPLIT_KEEP_EMPTY)
+      return util_string_split_step_keep_empty(string_ptr, separator);
+   else if(skip_empty == SPLIT_SKIP_EMPTY)
+      return util_string_split_step_skip_empty(string_ptr, separator);
+}
+
 char* util_chop_off_last_name_from_path_noalloc(char* path)
 {
    assert(path);

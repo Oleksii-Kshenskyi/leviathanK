@@ -5,9 +5,13 @@
 
 #include "memory.h"
 
+#define SPLIT_SKIP_EMPTY 1
+#define SPLIT_KEEP_EMPTY 0
+
 // C string utility functions
 extern char* util_string_create(Memory* memory, char* cstr_value, size_t buffer_size);
 extern int util_string_is_null_or_empty(const char* cstr);
+extern char* util_string_split_step(char** string_ptr, char separator, int skip_empty);
 
 // path tree utility functions
 extern char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name);

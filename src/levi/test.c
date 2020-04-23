@@ -1423,3 +1423,124 @@ int main_finds_single_node_and_prints_it()
    free(mem.pointer);
    return 0;
 }
+
+int main_test_string_split_keep_empty()
+{
+   printf("\nmain_test_string_split_keep_empty:\n");
+   Memory mem = memory_create(200);
+
+   printf("\n[STATUS] Creating an easy case and sequentially splitting [one two three] by space...\n");
+   char* test = util_string_create(&mem, "one two three", 0);
+   char* first = util_string_split_step(&test, ' ', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(test, "two three"));
+   char* second = util_string_split_step(&test, ' ', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(test, "three"));
+   char* third = util_string_split_step(&test, ' ', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(test, ""));
+
+   assert(!strcmp(first, "one"));
+   assert(!strcmp(second, "two"));
+   assert(!strcmp(third, "three"));
+
+   char* empty = util_string_split_step(&test, ' ', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(empty, ""));
+   assert(!strcmp(test, ""));
+
+   printf("\n[STATUS] Trying to split a string with no spaces by space...\n");
+   test = util_string_create(&mem, "there_is_no_space_here", 0);
+   char* string = util_string_split_step(&test, ' ', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(test, ""));
+   assert(!strcmp(string, "there_is_no_space_here"));
+
+   printf("\n[STATUS] Now splitting a string by character 'k'...\n");
+   test = util_string_create(&mem, "bulkek just a kool string with ks, that\'s it...\n", 0);
+   first = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   second = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   third = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   char* fourth = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   char* fifth = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   char* sixth = util_string_split_step(&test, 'k', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(test, ""));
+   assert(!strcmp(first, "bul"));
+   assert(!strcmp(second, "e"));
+   assert(!strcmp(third, " just a "));
+   assert(!strcmp(fourth, "ool string with "));
+   assert(!strcmp(fifth, "s, that\'s it...\n"));
+   assert(!strcmp(sixth, ""));
+   printf("\n");
+
+   memory_usage_status(&mem);
+   printf("main_test_string_split_keep_empty: OK\n");
+   free(mem.pointer);
+   return 0;
+}
+
+int main_test_string_split_skip_empty()
+{
+   printf("\nmain_test_string_split_skip_empty:\n");
+   Memory mem = memory_create(200);
+
+   printf("\n[STATUS] now testing [///lots/of//slashes///] with SPLIT_KEEP_EMPTY behavior...\n");
+   char* current_string = util_string_create(&mem, "///lots/of//slashes///", 0);
+
+   char* first = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(first, ""));
+   assert(!strcmp(current_string, "//lots/of//slashes///"));
+   char* second = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(second, ""));
+   assert(!strcmp(current_string, "/lots/of//slashes///"));
+   char* third = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(third, ""));
+   assert(!strcmp(current_string, "lots/of//slashes///"));
+   char* fourth = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(fourth, "lots"));
+   assert(!strcmp(current_string, "of//slashes///"));
+   char* fifth = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(fifth, "of"));
+   assert(!strcmp(current_string, "/slashes///"));
+   char* sixth = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(sixth, ""));
+   assert(!strcmp(current_string, "slashes///"));
+   char* seventh = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(seventh, "slashes"));
+   assert(!strcmp(current_string, "//"));
+   char* eighth = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(eighth, ""));
+   assert(!strcmp(current_string, "/"));
+   char* ninth = util_string_split_step(&current_string, '/', SPLIT_KEEP_EMPTY);
+   assert(!strcmp(ninth, ""));
+   assert(!strcmp(current_string, ""));
+
+   printf("\n[STATUS] now testing splitting [///lots/of//slashes///] with SPLIT_SKIP_EMPTY behavior...\n");
+   strcpy(current_string, "///lots/of//slashes///");
+   assert(!strcmp(current_string, "///lots/of//slashes///"));
+
+   first = util_string_split_step(&current_string, '/', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(first, "lots"));
+   assert(!strcmp(current_string, "of//slashes///"));
+   second = util_string_split_step(&current_string, '/', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(second, "of"));
+   assert(!strcmp(current_string, "slashes///"));
+   third = util_string_split_step(&current_string, '/', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(third, "slashes"));
+   assert(!strcmp(current_string, ""));
+   fourth = util_string_split_step(&current_string, '/', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(fourth, ""));
+   assert(!strcmp(current_string, ""));
+   fifth = util_string_split_step(&current_string, '/', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(fifth, ""));
+   assert(!strcmp(current_string, ""));
+
+
+   printf("\n[STATUS] 'Splitting' [   no_spaces_here   ] by space...\n");
+   strcpy(current_string, "   no_spaces_here   ");
+   first = util_string_split_step(&current_string, ' ', SPLIT_SKIP_EMPTY);
+   assert(!strcmp(first, "no_spaces_here"));
+   assert(!strcmp(current_string, ""));
+   printf("\n");
+
+   memory_usage_status(&mem);
+   printf("main_test_string_split_skip_empty: OK\n");
+   free(mem.pointer);
+   return 0;
+}
