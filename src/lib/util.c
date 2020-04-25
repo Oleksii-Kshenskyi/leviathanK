@@ -7,7 +7,7 @@ int util_string_is_null_or_empty(const char* cstr)
    return !cstr || !strcmp(cstr, "");
 }
 
-extern char* util_string_create(Memory* memory, char* cstr_value, size_t buffer_size)
+extern char* util_string_create(struct Memory* memory, char* cstr_value, size_t buffer_size)
 {
    assert(memory);
    assert(cstr_value);
@@ -20,7 +20,7 @@ extern char* util_string_create(Memory* memory, char* cstr_value, size_t buffer_
    return created;
 }
 
-char* util_build_path_prefix(Memory* memory, char* old_path, char* new_name)
+char* util_build_path_prefix(struct Memory* memory, char* old_path, char* new_name)
 {
    assert(memory);
    assert(old_path);

@@ -17,9 +17,9 @@ struct PathTree
    struct List* children;
 };
 
-extern struct PathTree* path_tree_create(Memory* memory);
+extern struct PathTree* path_tree_create(struct Memory* memory);
 extern int path_tree_is_empty(struct PathTree* tree);
-extern int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value);
+extern int path_tree_insert(struct Memory* memory, struct PathTree* tree, char* path, char* value);
 
 extern void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity);
 static inline void path_tree_print(struct PathTree* tree)

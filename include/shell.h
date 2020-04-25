@@ -4,19 +4,11 @@
 #include <string.h>
 
 #include "liblevi.h"
+#include "command.h"
 
-typedef void* (*executor_func)(void*);
-typedef void (*execution_result_processor)(void*);
-
-struct ShellCommand
-{
-   char* command_name;
-   executor_func executor;
-   execution_result_processor result_processor;
-};
-
-struct List* shell_create_command_list(Memory* memory);
-void shell_add_command(Memory* memory, struct List* command_list, char* command_name, executor_func executor, execution_result_processor result_processor);
-void shell_lookup_and_execute(struct List* command_list, char* command_name, void* data);
+struct List* shell_create_command_list(struct Memory* memory);
+void shell_add_command(struct Memory* memory, struct List* command_list, char* command_name, ExecutorFunc executor, ExecutionResultProcessor result_processor, DataCapsuleCreator data_capsule_creator);
+void shell_process_command(struct List* command_list, struct InitialCommandData* command_data);
+struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string);
 
 #endif

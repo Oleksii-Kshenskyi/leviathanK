@@ -2,7 +2,7 @@
 
 #include "list.h"
 
-struct List* list_create_head(Memory* memory, void* new_value)
+struct List* list_create_head(struct Memory* memory, void* new_value)
 {
    assert(memory);
 
@@ -16,7 +16,7 @@ struct List* list_create_head(Memory* memory, void* new_value)
    return new_list;
 }
 
-struct List* list_create_empty(Memory* memory)
+struct List* list_create_empty(struct Memory* memory)
 {
    assert(memory);
 
@@ -50,7 +50,7 @@ static void list_insert_into_empty(struct List* list, void* new_value)
    list->value = new_value;
 }
 
-void list_insert_tail(Memory* memory, struct List* list, void* new_value)
+void list_insert_tail(struct Memory* memory, struct List* list, void* new_value)
 {
    assert(memory);
    assert(list);

@@ -5,7 +5,7 @@
 
 int main_test_memory_before_growth()
 {
-   Memory the_mem = memory_create(3 * KB);
+   struct Memory the_mem = memory_create(3 * KB);
 
    char* string_one = memory_allocate(&the_mem, 1 * KB);
    strcpy(string_one, "string one");
@@ -47,7 +47,7 @@ int main_test_memory_before_growth()
 
 int main_list_creates_head()
 {
-   Memory mem = memory_create(1 * KB);
+   struct Memory mem = memory_create(1 * KB);
    int* val = memory_allocate(&mem, 1 * sizeof(int));
    *val = 34;
 
@@ -126,7 +126,7 @@ void print_element(struct List* element, void* data)
 
 int main_inserts_a_bunch_into_list_tail()
 {
-   Memory mem = memory_create(1 * KB);
+   struct Memory mem = memory_create(1 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 1;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -181,7 +181,7 @@ void increment_value(struct List* element, void* data)
 
 int main_checks_foreach()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 100;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -225,7 +225,7 @@ int greater_than(struct List* element, void* greater_than_what)
 
 int main_checks_find_if()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 1;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -281,7 +281,7 @@ int equal_to_pointer(struct List* element, void* equal_to_what)
 
 int main_deletes_head()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 132;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -333,7 +333,7 @@ int main_deletes_head()
 
 int main_deletes_tail()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 132;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -396,7 +396,7 @@ int main_deletes_tail()
 
 int main_deletes_middle_element()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    int* val1 = memory_allocate(&mem, 1 * sizeof(int));
    *val1 = 132;
    int* val2 = memory_allocate(&mem, 1 * sizeof(int));
@@ -459,7 +459,7 @@ int main_deletes_middle_element()
 
 int main_creates_empty_list_and_inserts_into_it()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    struct List* empty_list = list_create_empty(&mem);
 
@@ -508,7 +508,7 @@ int main_creates_empty_list_and_inserts_into_it()
 
 int main_deletes_the_only_list_element()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    struct List* empty_list = list_create_empty(&mem);
 
@@ -536,7 +536,7 @@ int main_deletes_the_only_list_element()
 
 int main_checks_subsequent_deletion_and_insertion()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    printf("\nmain_checks_subsequent_deletion_and_insertion:\n");
    printf("[STATUS] creating list with 3 elements: 33, 5151, 70815...\n");
@@ -588,7 +588,7 @@ int main_checks_subsequent_deletion_and_insertion()
 
 int main_tries_to_delete_from_empty_list()
 {
-   Memory mem = memory_create(0.1 * KB);
+   struct Memory mem = memory_create(0.1 * KB);
 
    struct List* empty_list = list_create_empty(&mem);
    assert(list_is_empty(empty_list));
@@ -623,7 +623,7 @@ int main_tries_to_delete_from_empty_list()
 
 int main_deletes_null_elements_from_list()
 {
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    printf("\nmain_deletes_null_elements_from_list:\n");
    printf("[STATUS] Creating a list of elements: [1, NULL, 3, NULL]\n");
@@ -673,7 +673,7 @@ int main_creates_root_path_tree_node()
 {
    printf("\nmain_creates_root_path_tree_node:\n");
    printf("[STATUS] Allocating memory and creating path tree root...\n");
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
    struct PathTree* root = path_tree_create(&mem);
 
    printf("[STATUS] Making sure root fields have expected values...\n");
@@ -692,7 +692,7 @@ int main_util_builds_paths_correctly()
 {
    printf("main_util_builds_paths_correctly:\n");
    printf("[STATUS] Creating 2 KB memory...\n");
-   Memory mem = memory_create(2 * KB);
+   struct Memory mem = memory_create(2 * KB);
 
    printf("[STATUS] Checking old + new names == \"\"...\n");
    char* path = util_build_path_prefix(&mem, "", "");
@@ -732,7 +732,7 @@ int main_util_builds_paths_noalloc_correctly()
 {
    printf("\nmain_util_builds_paths_noalloc_correctly:\n");
    printf("[STATUS] Creating 2 KB memory...\n");
-   Memory mem = memory_create(2 * KB);
+   struct Memory mem = memory_create(2 * KB);
 
    printf("[STATUS] Allocating path buffer...\n");
    char* path = memory_allocate(&mem, 1 * KB);
@@ -779,7 +779,7 @@ int main_util_builds_paths_noalloc_correctly()
 int main_unbuilds_path_prefix()
 {
    printf("\nmain_unbuilds_path_prefix:\n");
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    printf("[STATUS] Checking sequentially unbuilding the following path:\n");
    printf("         Hekek/a/pretty/long/path/that/doesn't do/anything/in/particular/honestly!\n");
@@ -830,7 +830,7 @@ int main_unbuilds_path_prefix()
 int main_checks_unbuilds_to_equal()
 {
    printf("\nmain_checks_unbuild_to_equal:\n");
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    printf("[STATUS] Checking if [please/do/this/properly] unbuilds to [please/do/this]...\n");
    char* path = util_string_create(&mem, "please/do/this/properly", 64);
@@ -876,7 +876,7 @@ void chop_off_single_pass_noalloc(char** full_path,
 int main_chops_names_off_paths_noalloc()
 {
    printf("\nmain_chops_names_off_paths_noalloc:\n");
-   Memory mem = memory_create(0.5 * KB);
+   struct Memory mem = memory_create(0.5 * KB);
 
    printf("[STATUS] Checking chopping off empty string.\n");
    printf("         Both chopped off name and path should be empty...\n");
@@ -937,7 +937,7 @@ int main_chops_names_off_paths_noalloc()
 int main_investigate_double_alloc_bug()
 {
    printf("main_investigate_double_alloc_bug:\n");
-   Memory mem = memory_create(10);
+   struct Memory mem = memory_create(10);
 
    memory_usage_status(&mem);
    printf("main_investigate_double_alloc_bug: OK\n");
@@ -952,7 +952,7 @@ int main_inserts_into_path_tree_and_prints_it()
    // print *(struct PathTree*)((*(struct List*)(*(struct PathTree*)tree->children->value)->children)->value)
 
    printf("\nmain_inserts_into_path_tree_and_prints_it:\n");
-   Memory mem = memory_create(10 * KB);
+   struct Memory mem = memory_create(10 * KB);
 
    printf("\n[STATUS] Printing an empty newly created tree...\n");
    struct PathTree* tree = path_tree_create(&mem);
@@ -1035,7 +1035,7 @@ int main_inserts_into_path_tree_and_prints_it()
    return 0;
 }
 
-struct PathTree* creates_tree_and_inserts_two_nodes(Memory* mem)
+struct PathTree* creates_tree_and_inserts_two_nodes(struct Memory* mem)
 {
    printf("\ncreates_tree_and_inserts_two_nodes:\n");
 
@@ -1054,7 +1054,7 @@ struct PathTree* creates_tree_and_inserts_two_nodes(Memory* mem)
 int main_tests_path_tree_insertion_and_going_out_of_context()
 {
    printf("\nmain_tests_path_tree_insertion_and_going_out_of_context:\n");
-   Memory mem = memory_create(1 * KB);
+   struct Memory mem = memory_create(1 * KB);
 
    printf("[STATUS] Calling a separate function to create a tree for me...\n");
    struct PathTree* tree = creates_tree_and_inserts_two_nodes(&mem);
@@ -1071,7 +1071,7 @@ int main_tests_path_tree_insertion_and_going_out_of_context()
 int main_tests_inserting_empty_values()
 {
    printf("\nmain_tests_inserting_empty_values:\n");
-   Memory mem = memory_create(10 * KB);
+   struct Memory mem = memory_create(10 * KB);
 
    printf("[STATUS] Inserting three nodes:\n");
    printf("         [the/mighty/kek/of/keks],\n");
@@ -1102,7 +1102,7 @@ int main_tests_inserting_empty_values()
 int main_tests_trying_to_insert_into_incorrect_paths()
 {
    printf("\nmain_tests_corner_cases_of_tree_insertion_and_printing:\n");
-   Memory mem = memory_create(10 * KB);
+   struct Memory mem = memory_create(10 * KB);
    int return_code = -2;
 
    printf("[STATUS] Inserting three nodes:\n");
@@ -1180,7 +1180,7 @@ int main_tests_trying_to_insert_into_incorrect_paths()
 int main_small_print_verbose_test()
 {
    printf("main_small_print_verbose_test:\n");
-   Memory mem = memory_create(1 * KB);
+   struct Memory mem = memory_create(1 * KB);
 
    printf("\n[STATUS] Creating a tree and inserting 4 small nodes:\n");
    printf("[a/smol/lil/node], [a/big/lil/node], [a/smol/cool/pp], [a/big/lil/ahaha kek]...\n");
@@ -1209,7 +1209,7 @@ int main_small_print_verbose_test()
 int main_checks_nonverbose_printing_of_empty_trees()
 {
    printf("main_checks_nonverbose_printing_of_empty_trees:\n");
-   Memory mem = memory_create(1 * KB);
+   struct Memory mem = memory_create(1 * KB);
 
    printf("\n[STATUS] Creating an empty tree and printing\n");
    printf("         with both verbose and non-verbose prints...\n");
@@ -1262,7 +1262,7 @@ void prints_out_find_status(struct PathTree* tree, char* path, char* expected_na
 int main_finds_nodes_by_path()
 {
    printf("\nmain_finds_nodes_by_path:\n");
-   Memory mem = memory_create(2 * KB);
+   struct Memory mem = memory_create(2 * KB);
 
    printf("\n[STATUS] Creating a tree with 8 nodes...\n");
    struct PathTree* tree = path_tree_create(&mem);
@@ -1320,7 +1320,7 @@ int main_finds_nodes_by_path()
 int main_tries_to_bork_find_node_by_path()
 {
    printf("\nmain_tries_to_bork_find_node_by_path:\n");
-   Memory mem = memory_create(2 * KB);
+   struct Memory mem = memory_create(2 * KB);
 
    printf("\n[STATUS] Creating a tree with 5 nodes...\n");
    struct PathTree* tree = path_tree_create(&mem);
@@ -1372,7 +1372,7 @@ int main_tries_to_bork_find_node_by_path()
 int main_finds_single_node_and_prints_it()
 {
    printf("\nmain_finds_single_node_and_prints_it:\n");
-   Memory mem = memory_create(2 * KB);
+   struct Memory mem = memory_create(2 * KB);
 
    printf("\n[STATUS] Creating a tree with 8 nodes...\n");
    struct PathTree* tree = path_tree_create(&mem);
@@ -1427,7 +1427,7 @@ int main_finds_single_node_and_prints_it()
 int main_test_string_split_keep_empty()
 {
    printf("\nmain_test_string_split_keep_empty:\n");
-   Memory mem = memory_create(200);
+   struct Memory mem = memory_create(200);
 
    printf("\n[STATUS] Creating an easy case and sequentially splitting [one two three] by space...\n");
    char* test = util_string_create(&mem, "one two three", 0);
@@ -1478,7 +1478,7 @@ int main_test_string_split_keep_empty()
 int main_test_string_split_skip_empty()
 {
    printf("\nmain_test_string_split_skip_empty:\n");
-   Memory mem = memory_create(200);
+   struct Memory mem = memory_create(200);
 
    printf("\n[STATUS] now testing [///lots/of//slashes///] with SPLIT_KEEP_EMPTY behavior...\n");
    char* current_string = util_string_create(&mem, "///lots/of//slashes///", 0);
