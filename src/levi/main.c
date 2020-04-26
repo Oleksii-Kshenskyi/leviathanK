@@ -18,17 +18,17 @@ void main_levi_shell_loop(struct Memory* application_memory)
    list_for_each(command_list, print_element, NULL);
    while(TRUE)
    {
-      struct Memory throwaway_memory = memory_create(1 * KB);
       printf("|LEVI|> ");
-      char* command_string = memory_allocate(&throwaway_memory, 1 * KB);
+      char* command_string = NULL;
       size_t zero = 0;
       getline(&command_string, &zero, stdin);
       command_string[strlen(command_string) - 1] = '\0';
       
-      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string);
+      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string, command_string);
       shell_process_command(command_list, &data);
 
-      free(throwaway_memory.pointer);
+
+      free(command_string);
    }
 }
 

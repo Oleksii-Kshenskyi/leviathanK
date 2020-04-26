@@ -7,6 +7,7 @@ struct List* shell_create_command_list(struct Memory* memory)
    struct List* command_list = list_create_empty(memory);
 
    shell_add_command(memory, command_list, "test", command_test_execute, command_test_process_result, command_test_create_data_capsule);
+   shell_add_command(memory, command_list, "exit", command_exit_execute, command_exit_process_result, command_exit_create_data_capsule);
 
    return command_list;
 }
@@ -56,7 +57,8 @@ void shell_lookup_and_execute(struct List* command_list, char* command_name, str
    struct List* list_command = list_find_first_if(command_list, shell_lookup_command_predicate, command_name);
    if(!list_command)
    {
-      printf("[?] No command [%s] found.\n", command_name);
+      if(strcmp(command_name, ""))
+         printf("[?] No command [%s] found.\n", command_name);
       return;
    }
    struct ShellCommand* command = (struct ShellCommand*) list_command->value;
@@ -74,14 +76,14 @@ void shell_process_command(struct List* command_list, struct InitialCommandData*
 }
 
 
-struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string)
+struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, const char* original_getline, char* command_string)
 {
    assert(application_memory);
    assert(command_string);
 
    return (struct InitialCommandData) {
       .application_memory = application_memory,
-      .throwaway_memory = NULL,
+      .original_getline = original_getline,
       .command_string = command_string
    };
 }
