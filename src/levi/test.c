@@ -862,27 +862,27 @@ int main_checks_unbuilds_to_equal()
    free(mem.pointer);
 }
 
-void chop_off_single_pass_noalloc(char** full_path, 
+void split_keep_single_pass_noalloc(char** full_path, 
                       char* chopped_off_expected, char* full_path_expected)
 {
-   // printf("\n==== CHOP OFF ITERATION ====\n");
-   char* chopped_off = util_chop_current_name_off_path_noalloc(full_path);
+   // printf("\n==== SPLIT KEEP EMPTY ITERATION ====\n");
+   char* chopped_off = util_string_split_step(full_path, '/', SPLIT_KEEP_EMPTY);
    // printf("Chopped off = [%s]\nPath = [%s]\n", chopped_off, *full_path);
    // printf("Chopped off expected = [%s]\nPath expected = [%s]\n", chopped_off_expected, full_path_expected);
    assert(!strcmp(chopped_off, chopped_off_expected));
    assert(!strcmp(*full_path, full_path_expected));
 }
 
-int main_chops_names_off_paths_noalloc()
+int main_split_keep_empty_behaves_like_chop_noalloc()
 {
-   printf("\nmain_chops_names_off_paths_noalloc:\n");
+   printf("\nmain_split_keep_empty_behaves_like_chop_noalloc:\n");
    struct Memory mem = memory_create(0.5 * KB);
 
    printf("[STATUS] Checking chopping off empty string.\n");
    printf("         Both chopped off name and path should be empty...\n");
    char* full_path = util_string_create(&mem, "", 10);
    assert(!strcmp(full_path, ""));
-   char* chopped_off = util_chop_current_name_off_path_noalloc(&full_path);
+   char* chopped_off = util_string_split_step(&full_path, '/', SPLIT_KEEP_EMPTY);
    assert(!strcmp(chopped_off, ""));
    assert(!strcmp(full_path, ""));
 
@@ -891,7 +891,7 @@ int main_chops_names_off_paths_noalloc()
    printf("         while the path itself should be empty...\n");
    full_path = util_string_create(&mem, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg", 0);
    assert(!strcmp(full_path, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg"));
-   chopped_off = util_chop_current_name_off_path_noalloc(&full_path);
+   chopped_off = util_string_split_step(&full_path, '/', SPLIT_KEEP_EMPTY);
    assert(!strcmp(chopped_off, "!@#\"\%@#^\%&\%*()_\\+nwb\';l\'lbweg"));
    assert(!strcmp(full_path, ""));
 
@@ -900,36 +900,36 @@ int main_chops_names_off_paths_noalloc()
    full_path = util_string_create(&mem, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!", 0);
    assert(!strcmp(full_path, "Hekek/a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!"));
 
-   chop_off_single_pass_noalloc(&full_path, "Hekek", 
+   split_keep_single_pass_noalloc(&full_path, "Hekek", 
                         "a/pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "a", 
+   split_keep_single_pass_noalloc(&full_path, "a", 
                         "pretty/long/path/that/doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "pretty", 
+   split_keep_single_pass_noalloc(&full_path, "pretty", 
                         "long/path/that/doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "long", 
+   split_keep_single_pass_noalloc(&full_path, "long", 
                         "path/that/doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "path", 
+   split_keep_single_pass_noalloc(&full_path, "path", 
                         "that/doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "that", 
+   split_keep_single_pass_noalloc(&full_path, "that", 
                         "doesn\'t do/anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "doesn\'t do", 
+   split_keep_single_pass_noalloc(&full_path, "doesn\'t do", 
                         "anything/in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "anything", 
+   split_keep_single_pass_noalloc(&full_path, "anything", 
                         "in/particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "in", 
+   split_keep_single_pass_noalloc(&full_path, "in", 
                         "particular/honestly!");
-   chop_off_single_pass_noalloc(&full_path, "particular", 
+   split_keep_single_pass_noalloc(&full_path, "particular", 
                         "honestly!");
-   chop_off_single_pass_noalloc(&full_path, "honestly!", 
+   split_keep_single_pass_noalloc(&full_path, "honestly!", 
                         "");
-   chop_off_single_pass_noalloc(&full_path, "", 
+   split_keep_single_pass_noalloc(&full_path, "", 
                         "");
-   chop_off_single_pass_noalloc(&full_path, "", 
+   split_keep_single_pass_noalloc(&full_path, "", 
                         "");
 
    printf("\n[STATUS] All the chopping off seems to have been done correctly!\n");
    memory_usage_status(&mem);
-   printf("main_chops_names_off_paths_noalloc: OK\n");
+   printf("main_split_keep_empty_behaves_like_chop_noalloc: OK\n");
    free(mem.pointer);
    return 0;
 }

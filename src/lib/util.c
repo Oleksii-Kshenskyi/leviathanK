@@ -95,24 +95,6 @@ int util_check_unbuilds_to_equal_nonempty(char* path_to_check, char* equals_to)
    return unbuilds_to_equal;
 }
 
-char* util_chop_current_name_off_path_noalloc(char** path_ptr)
-{
-   assert(path_ptr);
-   assert(*path_ptr);
-   char* original_path = *path_ptr;
-
-   char* first_separator = strchr(original_path, '/');
-   if(!first_separator)
-   {
-      *path_ptr += strlen(*path_ptr);
-      return original_path;
-   }
-   *first_separator = '\0';
-   *path_ptr = first_separator + 1;
-   
-   return original_path;
-}
-
 static char* util_string_split_step_keep_empty(char** string_ptr, char separator)
 {
    char* original_string = *string_ptr;

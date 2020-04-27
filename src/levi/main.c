@@ -28,7 +28,7 @@ void main_levi_shell_loop(struct List* command_list, struct Memory* application_
       getline(&command_string, &zero, stdin);
       command_string[strlen(command_string) - 1] = '\0';
       
-      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string, command_string);
+      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string);
       shell_process_command(command_list, &data);
 
       free(command_string);
@@ -46,7 +46,7 @@ int main()
    printf("Available commands: ");
    print_available_commands(command_list);
    printf("\n");
-   
+
    main_levi_shell_loop(command_list, &application_memory);
 
 }
