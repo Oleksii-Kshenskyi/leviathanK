@@ -3,18 +3,30 @@
 
 #include "memory.h"
 
-Memory memory_create(size_t capacity)
+struct Memory memory_create(size_t capacity)
 {
    assert(capacity > 0);
 
-   return (Memory) {
+   return (struct Memory) {
       .capacity = capacity,
       .size = 0,
       .pointer = malloc(capacity)
    };
 }
 
-void* memory_allocate(Memory* memory, size_t alloc_size)
+struct Memory* memory_create_heap(size_t capacity)
+{
+   assert(capacity > 0);
+
+   struct Memory* memory = malloc(sizeof(struct Memory));
+   memory->capacity = capacity;
+   memory->size = 0;
+   memory->pointer = malloc(capacity);
+
+   return memory;
+}
+
+void* memory_allocate(struct Memory* memory, size_t alloc_size)
 {
    assert(memory);
    assert(memory->size + alloc_size <= memory->capacity);
@@ -25,14 +37,14 @@ void* memory_allocate(Memory* memory, size_t alloc_size)
    return return_pointer;
 }
 
-void memory_clear(Memory* memory)
+void memory_clear(struct Memory* memory)
 {
    assert(memory);
 
    memory->size = 0;
 }
 
-extern void memory_usage_status(Memory* memory)
+extern void memory_usage_status(struct Memory* memory)
 {
    assert(memory);
 

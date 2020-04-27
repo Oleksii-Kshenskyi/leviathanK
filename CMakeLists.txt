@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(leviathanK)
+set(CMAKE_BUILD_TYPE Debug)
 set(LEVI_DIR src/levi)
 set(LIB_DIR src/lib)
-set(LEVI_SRC ${LEVI_DIR}/test.c)
+set(LEVI_SRC ${LEVI_DIR}/shell.c 
+             ${LEVI_DIR}/main.c
+             ${LEVI_DIR}/command.c)
 set(LIB_SRC ${LIB_DIR}/memory.c
             ${LIB_DIR}/list.c
-            ${LIB_DIR}/liblevi.c
             ${LIB_DIR}/path_tree.c
             ${LIB_DIR}/util.c)
 

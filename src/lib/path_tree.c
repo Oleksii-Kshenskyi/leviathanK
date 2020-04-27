@@ -3,7 +3,7 @@
 
 #include "path_tree.h"
 
-struct PathTree* path_tree_create(Memory* memory)
+struct PathTree* path_tree_create(struct Memory* memory)
 {
    assert(memory);
 
@@ -30,7 +30,7 @@ int path_tree_is_root_node(struct PathTree* node)
    return (!strcmp(node->node_name, ROOT_NAME) && !node->node_value);
 }
 
-static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* path, char* value)
+static void path_tree_create_path(struct Memory* memory, struct PathTree* tree, char* path, char* value)
 {
    assert(memory);
    assert(tree);
@@ -42,8 +42,8 @@ static void path_tree_create_path(Memory* memory, struct PathTree* tree, char* p
       return;
    }
 
-   char* new_node_name = util_chop_current_name_off_path_noalloc(
-      &path
+   char* new_node_name = util_string_split_step(
+      &path, '/', SPLIT_KEEP_EMPTY
    );
    struct PathTree* new_node = memory_allocate(
       memory, sizeof(struct PathTree)
@@ -79,7 +79,7 @@ static int path_tree_insertion_foreach_callback(struct List* child, void* path_e
 
 struct CreationPointInternal
 {
-   Memory* throwaway_memory;
+   struct Memory* throwaway_memory;
    char* creation_point;
    char* path;
    char* scanned_path;
@@ -96,7 +96,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
    if(util_string_is_null_or_empty(buffers->path) || !tree->children)
       return NULL;
 
-   char* looking_for_this = util_chop_current_name_off_path_noalloc(&buffers->path);
+   char* looking_for_this = util_string_split_step(&buffers->path, '/', SPLIT_KEEP_EMPTY);
    util_build_path_prefix_noalloc(&buffers->scanned_path, looking_for_this);
 
    struct List* node_on_correct_path = 
@@ -140,7 +140,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
 }
 
 static void path_tree_create_new_branch_on_this_node(
-   Memory* memory,
+   struct Memory* memory,
    struct PathTree* tree_to_insert_into,
    char* new_node_name
 )
@@ -176,7 +176,7 @@ static int path_tree_is_path_malformed(const char* path)
    return FALSE;
 }
 
-int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* value)
+int path_tree_insert(struct Memory* memory, struct PathTree* tree, char* path, char* value)
 {
    assert(memory);
    assert(path);
@@ -194,7 +194,7 @@ int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* va
       return 0;
    }
 
-   Memory throwaway_memory = memory_create(strlen(path) * 5);
+   struct Memory throwaway_memory = memory_create(strlen(path) * 5);
    struct CreationPointInternal buffers = {
       .throwaway_memory = &throwaway_memory,
       .creation_point = NULL,
@@ -211,7 +211,7 @@ int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* va
                         );
    if(!creation_point)
    {
-      char* new_node_name = util_chop_current_name_off_path_noalloc(&original_path);
+      char* new_node_name = util_string_split_step(&original_path, '/', SPLIT_KEEP_EMPTY);
       path_tree_create_new_branch_on_this_node(memory, tree, new_node_name);
 
       path_tree_create_path(memory, tree->children->tail->value, original_path, value);
@@ -225,7 +225,7 @@ int path_tree_insert(Memory* memory, struct PathTree* tree, char* path, char* va
 
 struct PrintTreeInternal
 {
-   Memory* throwaway_memory;
+   struct Memory* throwaway_memory;
    char* current_path_prefix;
    int verbosity_level;
 };
@@ -307,7 +307,7 @@ void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity)
    if(!tree->children)
       return;
 
-   Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
+   struct Memory throwaway_memory = memory_create(THROWAWAY_MEMORY_SIZE_FOR_PRINT);
    struct PrintTreeInternal throwaway_buffers = {
       .throwaway_memory = &throwaway_memory,
       .current_path_prefix = NULL,
@@ -326,7 +326,7 @@ struct PathTree* path_tree_find_node_by_path(struct PathTree* tree, char* path)
    if(path_tree_is_path_malformed(path))
       return NULL;
 
-   Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
+   struct Memory throwaway_memory = memory_create(strlen(path) * 4 + 5);
    char* buf_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
    char* buf_scanned_path = memory_allocate(&throwaway_memory, strlen(path) + 1);
    strcpy(buf_path, path);
