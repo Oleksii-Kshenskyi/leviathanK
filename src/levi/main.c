@@ -4,18 +4,22 @@
 #include "liblevi.h"
 #include "shell.h"
 
-void print_element(struct List* element, void* data)
+void print_command(struct List* element, void* data)
 {
-   if(!element->value)
-      printf("[DEBUG] command_name = [EMPTY]\n");
-   else
-      printf("[DEBUG] command_name = %s\n", ((struct ShellCommand*)element->value)->command_name);
+   printf("%s", ((struct ShellCommand*)element->value)->command_name);
+   if(element->next)
+      printf(", ");
 }
 
-void main_levi_shell_loop(struct Memory* application_memory)
+void print_available_commands(struct List* command_list)
 {
-   struct List* command_list = shell_create_command_list(application_memory);
-   list_for_each(command_list, print_element, NULL);
+   printf("[");
+   list_for_each(command_list, print_command, NULL);
+   printf("]");
+}
+
+void main_levi_shell_loop(struct List* command_list, struct Memory* application_memory)
+{
    while(TRUE)
    {
       printf("|LEVI|> ");
@@ -27,7 +31,6 @@ void main_levi_shell_loop(struct Memory* application_memory)
       struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string, command_string);
       shell_process_command(command_list, &data);
 
-
       free(command_string);
    }
 }
@@ -36,7 +39,14 @@ int main()
 {
    printf("Welcome to leviathanK, a compact path tree explorer!\n");
    printf("Current version is: [0.5.0]\n");
-   printf("Available commands: [TO BE IMPLEMENTED]\n");
+
    struct Memory application_memory = memory_create(1 * MB);
-   main_levi_shell_loop(&application_memory);
+   struct List* command_list = shell_create_command_list(&application_memory);
+
+   printf("Available commands: ");
+   print_available_commands(command_list);
+   printf("\n");
+   
+   main_levi_shell_loop(command_list, &application_memory);
+
 }
