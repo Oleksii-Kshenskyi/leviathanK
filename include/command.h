@@ -23,6 +23,7 @@ struct InitialCommandData
    struct Memory* application_memory;
    const char* original_getline;
    char* command_string;
+   struct PathTree* application_tree_root;
 };
 
 void* command_test_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data);

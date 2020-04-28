@@ -77,7 +77,7 @@ void shell_process_command(struct List* command_list, struct InitialCommandData*
 }
 
 
-struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string)
+struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string, struct PathTree* application_tree_root)
 {
    assert(application_memory);
    assert(command_string);
@@ -85,6 +85,7 @@ struct InitialCommandData shell_pack_initial_data(struct Memory* application_mem
    return (struct InitialCommandData) {
       .application_memory = application_memory,
       .original_getline = (const char*) command_string,
-      .command_string = command_string
+      .command_string = command_string,
+      .application_tree_root = application_tree_root
    };
 }
