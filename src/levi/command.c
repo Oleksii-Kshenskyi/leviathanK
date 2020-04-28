@@ -128,9 +128,11 @@ void* command_set_create_data_capsule(struct ShellCommand* command, struct Initi
    data_capsule->new_node_path = util_string_split_step(&initial_data->command_string, ' ', SPLIT_SKIP_EMPTY);
    if(path_tree_is_path_malformed(data_capsule->new_node_path))
       data_capsule->new_node_path = NULL;
-   data_capsule->new_node_value = util_string_split_step(&initial_data->command_string, ' ', SPLIT_SKIP_EMPTY);
-   if(util_string_is_null_or_empty(data_capsule->new_node_value))
+
+   if(util_string_is_null_or_empty(initial_data->command_string))
       data_capsule->new_node_value = NULL;
+   else
+      data_capsule->new_node_value = util_string_create(data_capsule->application_memory, initial_data->command_string, 0);
 
    return data_capsule;
 }
