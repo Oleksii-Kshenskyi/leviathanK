@@ -101,3 +101,20 @@ void command_exit_process_result(void* data_capsule)
    free(app_memory->pointer);
    exit(0);
 }
+
+void* command_set_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data)
+{
+   printf("[DEBUG] [command_set_create_data_capsule()]\n");
+   return NULL;
+}
+
+void* command_set_execute(void* data_capsule)
+{
+   printf("[DEBUG] [command_set_execute()]\n");
+   return NULL;
+}
+
+void command_set_process_result(void* data_capsule)
+{
+   printf("[DEBUG] [command_set_process_result()]\n");
+}
