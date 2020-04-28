@@ -23,6 +23,7 @@ struct InitialCommandData
    struct Memory* application_memory;
    const char* original_getline;
    char* command_string;
+   struct PathTree* application_tree_root;
 };
 
 void* command_test_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data);
@@ -32,5 +33,9 @@ void command_test_process_result(void* data_capsule);
 void* command_exit_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data);
 void* command_exit_execute(void* data_capsule);
 void command_exit_process_result(void* data_capsule);
+
+void* command_set_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data);
+void* command_set_execute(void* data_capsule);
+void command_set_process_result(void* data_capsule);
 
 #endif

@@ -18,7 +18,7 @@ void print_available_commands(struct List* command_list)
    printf("]");
 }
 
-void main_levi_shell_loop(struct List* command_list, struct Memory* application_memory)
+void main_levi_shell_loop(struct List* command_list, struct Memory* application_memory, struct PathTree* application_tree_root)
 {
    while(TRUE)
    {
@@ -28,7 +28,7 @@ void main_levi_shell_loop(struct List* command_list, struct Memory* application_
       getline(&command_string, &zero, stdin);
       command_string[strlen(command_string) - 1] = '\0';
       
-      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string);
+      struct InitialCommandData data = shell_pack_initial_data(application_memory, command_string, application_tree_root);
       shell_process_command(command_list, &data);
 
       free(command_string);
@@ -38,15 +38,16 @@ void main_levi_shell_loop(struct List* command_list, struct Memory* application_
 int main()
 {
    printf("Welcome to leviathanK, a compact path tree explorer!\n");
-   printf("Current version is: [0.5.0]\n");
+   printf("Current version is: [0.6.0]\n");
 
    struct Memory application_memory = memory_create(1 * MB);
    struct List* command_list = shell_create_command_list(&application_memory);
+   struct PathTree* application_tree_root = path_tree_create(&application_memory);
 
    printf("Available commands: ");
    print_available_commands(command_list);
    printf("\n");
 
-   main_levi_shell_loop(command_list, &application_memory);
+   main_levi_shell_loop(command_list, &application_memory, application_tree_root);
 
 }

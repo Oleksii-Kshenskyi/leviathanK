@@ -6,6 +6,7 @@ struct List* shell_create_command_list(struct Memory* memory)
 {
    struct List* command_list = list_create_empty(memory);
 
+   shell_add_command(memory, command_list, "set", command_set_execute, command_set_process_result, command_set_create_data_capsule);
    shell_add_command(memory, command_list, "test", command_test_execute, command_test_process_result, command_test_create_data_capsule);
    shell_add_command(memory, command_list, "exit", command_exit_execute, command_exit_process_result, command_exit_create_data_capsule);
 
@@ -76,7 +77,7 @@ void shell_process_command(struct List* command_list, struct InitialCommandData*
 }
 
 
-struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string)
+struct InitialCommandData shell_pack_initial_data(struct Memory* application_memory, char* command_string, struct PathTree* application_tree_root)
 {
    assert(application_memory);
    assert(command_string);
@@ -84,6 +85,7 @@ struct InitialCommandData shell_pack_initial_data(struct Memory* application_mem
    return (struct InitialCommandData) {
       .application_memory = application_memory,
       .original_getline = (const char*) command_string,
-      .command_string = command_string
+      .command_string = command_string,
+      .application_tree_root = application_tree_root
    };
 }

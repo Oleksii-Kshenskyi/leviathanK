@@ -18,7 +18,10 @@ struct PathTree
 };
 
 extern struct PathTree* path_tree_create(struct Memory* memory);
+
 extern int path_tree_is_empty(struct PathTree* tree);
+extern int path_tree_is_path_malformed(const char* path);
+
 extern int path_tree_insert(struct Memory* memory, struct PathTree* tree, char* path, char* value);
 
 extern void path_tree_print_choose_verbosity(struct PathTree* tree, int verbosity);
