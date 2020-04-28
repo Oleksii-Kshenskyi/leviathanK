@@ -53,7 +53,7 @@ void util_build_path_prefix_noalloc(char** old_path_ptr, char* new_name)
       return;
    else if (util_string_is_null_or_empty(*old_path_ptr))
    {
-      strcat(*old_path_ptr, new_name);
+      strcpy(*old_path_ptr, new_name);
       return;
    }
    else if (util_string_is_null_or_empty(new_name))

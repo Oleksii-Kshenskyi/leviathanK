@@ -157,14 +157,9 @@ void command_set_process_result(void* data_capsule)
 {
    struct SetDataCapsule* set_data_capsule = data_capsule;
    if(!set_data_capsule->new_node_path || set_data_capsule->insert_exit_code == -1)
-   {
       printf("[SET] The path to the node is malformed. Not setting anything.\n");
-      return;
-   }
-
-   printf("[SET] Node set successfully.\n");
-   printf("[SET] [DEBUG] Printing out the current tree:\n");
-   path_tree_print_verbose(set_data_capsule->application_tree_root);
+   else
+      printf("[SET] Node set successfully.\n");
 
    struct Memory* throwaway_memory = set_data_capsule->throwaway_memory;
    free(throwaway_memory->pointer);

@@ -106,7 +106,7 @@ static struct PathTree* path_tree_find_starting_point_for_path_creation(
 
    if(!buffers->creation_point)
    {
-      buffers->creation_point = util_string_create(buffers->throwaway_memory, "", 0.2 * buffers->throwaway_memory->capacity);
+      buffers->creation_point = util_string_create(buffers->throwaway_memory, "", 0.25 * buffers->throwaway_memory->capacity);
       strcpy(buffers->creation_point, "");
    }
 
@@ -194,7 +194,7 @@ int path_tree_insert(struct Memory* memory, struct PathTree* tree, char* path, c
       return 0;
    }
 
-   struct Memory throwaway_memory = memory_create(strlen(path) * 5);
+   struct Memory throwaway_memory = memory_create(strlen(path) * 5 + 5);
    struct CreationPointInternal buffers = {
       .throwaway_memory = &throwaway_memory,
       .creation_point = NULL,
