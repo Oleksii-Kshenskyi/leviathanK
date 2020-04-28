@@ -157,7 +157,7 @@ static void path_tree_create_new_branch_on_this_node(
    list_insert_tail(memory, tree_to_insert_into->children, new_node);
 }
 
-static int path_tree_is_path_malformed(const char* path)
+int path_tree_is_path_malformed(const char* path)
 {
    assert(path);
    size_t path_len = strlen(path);
