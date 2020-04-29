@@ -38,7 +38,7 @@ void main_levi_shell_loop(struct List* command_list, struct Memory* application_
 int main()
 {
    printf("Welcome to leviathanK, a compact path tree explorer!\n");
-   printf("Current version is: [0.7.0]\n");
+   printf("Current version is: [0.6.2]\n");
 
    struct Memory application_memory = memory_create(1 * MB);
    struct List* command_list = shell_create_command_list(&application_memory);
