@@ -7,6 +7,7 @@ struct List* shell_create_command_list(struct Memory* memory)
    struct List* command_list = list_create_empty(memory);
 
    shell_add_command(memory, command_list, "set", command_set_execute, command_set_process_result, command_set_create_data_capsule);
+   shell_add_command(memory, command_list, "print", command_print_execute, command_print_process_result, command_print_create_data_capsule);
    shell_add_command(memory, command_list, "test", command_test_execute, command_test_process_result, command_test_create_data_capsule);
    shell_add_command(memory, command_list, "exit", command_exit_execute, command_exit_process_result, command_exit_create_data_capsule);
 

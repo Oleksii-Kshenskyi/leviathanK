@@ -165,3 +165,18 @@ void command_set_process_result(void* data_capsule)
    free(throwaway_memory->pointer);
    free(throwaway_memory);
 }
+
+void* command_print_create_data_capsule(struct ShellCommand* command, struct InitialCommandData* initial_data)
+{
+   printf("[DEBUG] [command_print_create_data_capsule()]\n");
+}
+
+void* command_print_execute(void* data_capsule)
+{
+   printf("[DEBUG] [command_print_execute()]\n");
+}
+
+void command_print_process_result(void* data_capsule)
+{
+   printf("[DEBUG] [command_print_process_result()]\n");
+}
