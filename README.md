@@ -75,7 +75,7 @@ filled: [EMPTY] [0x7f384fdae34c]
 filled/node: value [0x7f384fdae393]
 ```
 
-**NOTE**: this print implementation has a couple of bugs that haven't been fixed. For comprehensive details on the bugs please refer to #27.
+**NOTE**: this print implementation has a couple of bugs that haven't been fixed. For comprehensive details on the bugs please refer to issue [#27](https://github.com/Oleksii-Kshenskyi/leviathanK/issues/27).
 
 # How to build?
 
@@ -107,11 +107,12 @@ On Linux, the application requires:
 - same make commands as for Manjaro/Arch to control the application execution and building.
 
 ## On any other Linux
-Use your system's package manager to install
+Use your system's package manager to install:
 - cmake 3
 - ninja build system
 - valgrind if needed
+
 Then make sure that the executables for those are called `cmake`, `ninja` and `valgrind` on your system. If not, change the executable calls in the Makefile accordingly.
 
 # The 2020 Challenge
-This project is a part of the 2020 challenge where I would start and finish one IT (mostly programming except for one month) project within one month, one project a month starting from Feb 2020. This project is the April 2020 project (Run One, which is currently the only one for this project, started on 04/01/2020 and ended on 04/30/2020). This is the reason why there were some bugs left in the print implementation and features like deleting a node and saving trees to/restoring from a file were not implemented, due to the 04/30/2020 deadline. For precise statistics on estimations and time spent on this project, please refer to issue #1 of this project.
+This project is a part of the 2020 challenge where I would start and finish one IT (mostly programming except for one month) project within one month, one project a month starting from Feb 2020. This project is the April 2020 project (Run One, which is currently the only one for this project, started on 04/01/2020 and ended on 04/30/2020). This is the reason why there were some bugs left in the print implementation and features like deleting a node and saving trees to/restoring from a file were not implemented, due to the 04/30/2020 deadline. For precise statistics on estimations and time spent on this project, please refer to issue [#1](https://github.com/Oleksii-Kshenskyi/leviathanK/issues/1) of this project.
