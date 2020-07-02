@@ -114,5 +114,10 @@ Use your system's package manager to install:
 
 Then make sure that the executables for those are called `cmake`, `ninja` and `valgrind` on your system. If not, change the executable calls in the Makefile accordingly.
 
-# The 2020 Challenge
-This project is a part of the 2020 challenge where I would start and finish one IT (mostly programming except for one month) project within one month, one project a month starting from Feb 2020. This project is the April 2020 project (Run One, which is currently the only one for this project, started on 04/01/2020 and ended on 04/30/2020). This is the reason why there were some bugs left in the print implementation and features like deleting a node and saving trees to/restoring from a file were not implemented, due to the 04/30/2020 deadline. For precise statistics on estimations and time spent on this project, please refer to issue [#1](https://github.com/Oleksii-Kshenskyi/leviathanK/issues/1) of this project.
+# Useful info
+
+This project was created based on the idea of doing a whole project from scratch in just a single month. It was done between 04/01/2020 and 04/30/2020.
+
+For precise statistics on estimations and time spent on this project, please refer to issue [#1](https://github.com/Oleksii-Kshenskyi/leviathanK/issues/1) of this project.
+
+For this project's Kanban board, see [here](https://github.com/Oleksii-Kshenskyi/leviathanK/projects/1).
